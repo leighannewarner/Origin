@@ -1,86 +1,76 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 /// <summary>
-/// Player controller and behavior
+/// Player controller and behavior.
 /// </summary>
-public class PlayerScript : MonoBehaviour
-{
-  /// <summary>
-  /// 1 - The speed of the ship
-  /// </summary>
-  public Vector2 speed = new Vector2(50, 50);
 
-  // 2 - Store the movement
-  private Vector2 movement;
+public class PlayerScript : MonoBehaviour {
 
-  void Update()
-  {
-    // 3 - Retrieve axis information
-    float inputX = Input.GetAxis("Horizontal");
-    float inputY = Input.GetAxis("Vertical");
+	/// <summary>
+	/// The speed of the ship
+	/// </summary>
+	public Vector2 speedVector = new Vector2(50, 50);
 
-    // 4 - Movement per direction
-    movement = new Vector2(
-      speed.x * inputX,
-      speed.y * inputY);
+	//The movement speed and direction
+	private Vector2 movement = new Vector2(0, 0);
 
-	// 5 - Shooting
-	bool shoot = Input.GetButtonDown("Fire1");
-	shoot |= Input.GetButtonDown("Fire2");
-	// Careful: For Mac users, ctrl + arrow is a bad idea
-	
-	if (shoot)
-	{
-		WeaponScript weapon = GetComponent<WeaponScript>();
-		if (weapon != null)
-		{
-			// false because the player is not an enemy
-			weapon.Attack(false);
-			SoundEffectsHelper.Instance.MakePlayerShotSound();
+	/// <summary>
+	/// Starting size
+	/// </summary>
+	public int size = 2;
+	public int speedScaleFactor = 2;
+	public float sizeScaleFactor = 0.5f;
+
+	// Update is called once per frame
+	void Update () {
+		//Movement
+		float inputX = Input.GetAxis("Horizontal");
+		movement.x = speedVector.x * inputX;
+
+		//Growing and shrinking
+		if(Input.GetMouseButtonDown(0) && size > 1) {
+			decreaseSize();
+			Debug.Log (speedVector);
+		} else if(Input.GetMouseButtonDown(1) && size < 3) {
+			increaseSize();
+			Debug.Log (speedVector);
+		}
+
+		if(Input.GetKeyUp("space")) {
+			Debug.Log ("Space key.");
 		}
 	}
 
-		// 6 - Make sure we are not outside the camera bounds
-		var dist = (transform.position - Camera.main.transform.position).z;
-		
-		var leftBorder = Camera.main.ViewportToWorldPoint(
-			new Vector3(0, 0, dist)
-			).x;
-		
-		var rightBorder = Camera.main.ViewportToWorldPoint(
-			new Vector3(1, 0, dist)
-			).x;
-		
-		var topBorder = Camera.main.ViewportToWorldPoint(
-			new Vector3(0, 0, dist)
-			).y;
-		
-		var bottomBorder = Camera.main.ViewportToWorldPoint(
-			new Vector3(0, 1, dist)
-			).y;
-		
-		transform.position = new Vector3(
-			Mathf.Clamp(transform.position.x, leftBorder, rightBorder),
-			Mathf.Clamp(transform.position.y, topBorder, bottomBorder),
-			transform.position.z
-			);
-		
-		// End of the update method
+	void FixedUpdate() {
+		// Set the movement
+		rigidbody2D.velocity = movement;
 
-  }
+	}
 
-  void FixedUpdate()
-  {
-    // 5 - Move the game object
-    rigidbody2D.velocity = movement;
-  }
+	void decreaseSize() {
+		size -= 1;
+		transform.localScale -= new Vector3(sizeScaleFactor,sizeScaleFactor,0);
+		
+		if (size == 2) {
+			speedVector.x = (50/speedScaleFactor)*2;
+			speedVector.y = (50/speedScaleFactor)*2;
+		} else {
+			speedVector.x = (50/speedScaleFactor);
+			speedVector.y = (50/speedScaleFactor);
+		}
+	}
 
-  void OnDestroy()
-  {
-		// Game Over.
-		// Add the script to the parent because the current game
-		// object is likely going to be destroyed immediately.
-		transform.parent.gameObject.AddComponent<GameOverScript>();
-  }
-
+	void increaseSize() {
+		size += 1;
+		transform.localScale += new Vector3(sizeScaleFactor,sizeScaleFactor,0);
+		
+		if (size == 2) {
+			speedVector.x = (50/speedScaleFactor)*2;
+			speedVector.y = (50/speedScaleFactor)*2;
+		} else {
+			speedVector.x = (50/speedScaleFactor);
+			speedVector.y = (50/speedScaleFactor);
+		}
+	}
 }
