@@ -33,30 +33,33 @@ public class PlayerScript : MonoBehaviour {
 		//Movement
 		float inputX = Input.GetAxis("Horizontal");
 		movement.x = speedVector.x * inputX;
+		//Debug.Log ("inputX: " + inputX);
 
-		/*if(jumping && jumpFrame < jumpCap) {
+		if(jumping && jumpFrame < jumpCap) {
 			movement.y += speedVector.y * 0.05f;
 			jumpFrame++;
 
 			if(jumpFrame >= jumpCap) {
 				jumping = false;
+				jumpFrame = 0;
 				movement.y = 0f;
-				falling = true;
+				Debug.Log ("Done jumping!");
 			}
 		}
 
-		if(falling && jumpFrame > 0) {
+		/*if(falling && jumpFrame > 0) {
 			movement.y -= speedVector.y * 0.05f;
 			jumpFrame--;
 			
 			if(jumpFrame <= 0) {
 				movement.y = 0f;
 				falling = false;
+				jumping = false;
 			}
 		}*/
 
 		if(falling) {
-			movement.y -= speedVector.y * 0.005f;
+			movement.y -= speedVector.y * 0.05f;
 		}
 
 		//User input
@@ -67,7 +70,10 @@ public class PlayerScript : MonoBehaviour {
 		}
 
 		if(Input.GetKeyUp("space")) {
-			jumping = true;
+			Debug.Log (jumping + " " + falling);
+			if(!jumping && !falling) {
+				jumping = true;
+			}
 		}
 	}
 
@@ -107,9 +113,9 @@ public class PlayerScript : MonoBehaviour {
 		if(c.gameObject.name == "CollisionTile") {
 			falling = false;
 			//Debug.Log (c.gameObject.transform.position + " , " + this.gameObject.transform.position);
-			Debug.Log ("X: " + c.gameObject.transform.position.x + " , " + (this.gameObject.transform.position.x));
-			Debug.Log ("Y: " + c.gameObject.transform.position.y + " , " + (this.gameObject.transform.position.y));
-			Debug.Log ("Height: " + this.gameObject.transform.localScale);
+			//Debug.Log ("X: " + c.gameObject.transform.position.x + " , " + (this.gameObject.transform.position.x));
+			//Debug.Log ("Y: " + c.gameObject.transform.position.y + " , " + (this.gameObject.transform.position.y));
+			//Debug.Log ("Height: " + this.gameObject.transform.localScale);
 		}
 	}
 
