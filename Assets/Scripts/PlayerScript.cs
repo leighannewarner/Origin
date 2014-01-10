@@ -60,12 +60,24 @@ public class PlayerScript : MonoBehaviour {
 	{
 		// Cache the horizontal input.
 		float h = Input.GetAxis("Horizontal");
-		
-		if(h * rigidbody2D.velocity.x < maxSpeed && !leftWalled || !rightWalled) 			
-			rigidbody2D.AddForce(Vector2.right * h * moveForce); 		 		
-		if(Mathf.Abs(rigidbody2D.velocity.x) > maxSpeed)
-			rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.x) * maxSpeed, rigidbody2D.velocity.y);
-		
+
+		if(leftWalled && size < 3) {
+			if(h * rigidbody2D.velocity.x < maxSpeed) 			
+				rigidbody2D.AddForce(Vector2.up * h * moveForce); 		 		
+			if(Mathf.Abs(rigidbody2D.velocity.x) > maxSpeed)
+				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, Mathf.Sign(rigidbody2D.velocity.y) * maxSpeed);
+		} else if(rightWalled && size < 3) {
+			if(Mathf.Abs(h * rigidbody2D.velocity.x) < maxSpeed) 			
+				rigidbody2D.AddForce(Vector2.up * h * moveForce * -1f); 		 		
+			if(Mathf.Abs(rigidbody2D.velocity.x) > maxSpeed)
+				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, Mathf.Sign(rigidbody2D.velocity.y) * maxSpeed *-1);
+		} else {
+			if(h * rigidbody2D.velocity.x < maxSpeed) 			
+				rigidbody2D.AddForce(Vector2.right * h * moveForce); 		 		
+			if(Mathf.Abs(rigidbody2D.velocity.x) > maxSpeed)
+				rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.x) * maxSpeed, rigidbody2D.velocity.y);
+		}
+
 		// If the player should jump...
 		if(jump)
 		{	
