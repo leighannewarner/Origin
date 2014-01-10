@@ -24,7 +24,7 @@ public class EnemyScript : MonoBehaviour {
 	public float sizeScaleFactor = 0.5f;
 
 	private float h = 1.0f;
-	
+
 	void Awake()
 	{
 		// Setting up references.

@@ -26,6 +26,8 @@ public class PlayerScript : MonoBehaviour {
 
 	public int size = 2;
 	public float sizeScaleFactor = 0.5f;
+
+	public int health = 100;
 	
 	void Awake()
 	{
@@ -83,10 +85,10 @@ public class PlayerScript : MonoBehaviour {
 		{	
 			if(leftWalled && !grounded) {
 				rigidbody2D.AddForce(new Vector2(-1f*Mathf.Sqrt(jumpForce*4), Mathf.Sqrt(jumpForce*4)));
-				Debug.Log ("Left Wall jump!");
+				jump = false;
 			} else if(rightWalled && !grounded) {
 				rigidbody2D.AddForce(new Vector2(Mathf.Sqrt(jumpForce*4), Mathf.Sqrt(jumpForce*4)));
-				Debug.Log ("Right Wall jump!");
+				jump = false;
 			} else {
 				rigidbody2D.AddForce(new Vector2(0f, jumpForce));
 				jump = false;
@@ -103,5 +105,23 @@ public class PlayerScript : MonoBehaviour {
 		size += 1;
 		transform.localScale += new Vector3(sizeScaleFactor,sizeScaleFactor,0);
 
+	}
+
+	void OnCollisionStay2D (Collision2D c) {
+		if(c.gameObject.name == "Grate" && size == 3) {
+			c.gameObject.collider2D.enabled = false;
+		}
+		//Debug.Log ("Collision");
+	}
+
+	void OnCollisionEnter2D (Collision2D c) {
+		if(c.gameObject.tag == "Enemy") {
+			health--;
+			Debug.Log (health);
+
+			if(health == 0) {
+				Destroy (this.gameObject);
+			}
+		}
 	}
 }
