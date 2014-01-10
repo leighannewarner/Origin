@@ -12,10 +12,17 @@ public class PlayerScript : MonoBehaviour {
 	
 	public float moveForce = 365f;			
 	public float maxSpeed = 5f;			
-	public float jumpForce = 1000f;			
+	public float jumpForce = 1000f;	
+	public float speedx = 0f;
+	public float speedy = 0f;
 	
-	private Transform groundDetector;		
+	private Transform groundDetector;
 	private bool grounded = false;	
+
+	private Transform leftWallDetector;
+	private Transform rightWallDetector;
+	private bool leftWalled = false;
+	private bool rightWalled = false;
 
 	public int size = 2;
 	public float sizeScaleFactor = 0.5f;
@@ -24,16 +31,20 @@ public class PlayerScript : MonoBehaviour {
 	{
 		// Setting up references.
 		groundDetector = transform.Find("GroundDetector");
+		leftWallDetector = transform.Find("LeftWallDetector");
+		rightWallDetector = transform.Find("RightWallDetector");
 	}
 	
 	void Update()
 	{
 		// The player is grounded if a linecast to the groundcheck position hits anything on the ground layer.
-		grounded = Physics2D.Linecast(transform.position, groundDetector.position, 1 << LayerMask.NameToLayer("Terrain"));  
+		grounded = Physics2D.Linecast(transform.position, groundDetector.position, 1 << LayerMask.NameToLayer("Terrain")); 
+		leftWalled = Physics2D.Linecast(transform.position, rightWallDetector.position, 1 << LayerMask.NameToLayer("Terrain"));
+		rightWalled = Physics2D.Linecast(transform.position, leftWallDetector.position, 1 << LayerMask.NameToLayer("Terrain")); 
 		
 		// If the jump button is pressed and the player is grounded then the player should jump.
 		if(Input.GetButtonDown("Jump")) {
-			if(grounded) {
+			if(grounded || leftWalled || rightWalled) {
 				jump = true;
 			}
 		}
@@ -47,11 +58,10 @@ public class PlayerScript : MonoBehaviour {
 	
 	void FixedUpdate ()
 	{
-		Debug.Log("Player " + grounded);
 		// Cache the horizontal input.
 		float h = Input.GetAxis("Horizontal");
 		
-		if(h * rigidbody2D.velocity.x < maxSpeed) 			
+		if(h * rigidbody2D.velocity.x < maxSpeed && !leftWalled || !rightWalled) 			
 			rigidbody2D.AddForce(Vector2.right * h * moveForce); 		 		
 		if(Mathf.Abs(rigidbody2D.velocity.x) > maxSpeed)
 			rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.x) * maxSpeed, rigidbody2D.velocity.y);
@@ -59,8 +69,16 @@ public class PlayerScript : MonoBehaviour {
 		// If the player should jump...
 		if(jump)
 		{	
-			rigidbody2D.AddForce(new Vector2(0f, jumpForce));
-			jump = false;
+			if(leftWalled && !grounded) {
+				rigidbody2D.AddForce(new Vector2(-1f*Mathf.Sqrt(jumpForce*4), Mathf.Sqrt(jumpForce*4)));
+				Debug.Log ("Left Wall jump!");
+			} else if(rightWalled && !grounded) {
+				rigidbody2D.AddForce(new Vector2(Mathf.Sqrt(jumpForce*4), Mathf.Sqrt(jumpForce*4)));
+				Debug.Log ("Right Wall jump!");
+			} else {
+				rigidbody2D.AddForce(new Vector2(0f, jumpForce));
+				jump = false;
+			}
 		}
 	}
 

@@ -42,8 +42,6 @@ public class EnemyScript : MonoBehaviour {
 	
 	void FixedUpdate ()
 	{
-		Debug.Log("Walled " + walled);
-
 		if(walled) {
 			h *= -1.0f;
 		}
