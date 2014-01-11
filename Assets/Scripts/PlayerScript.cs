@@ -17,7 +17,8 @@ public class PlayerScript : MonoBehaviour {
 	public float speedy = 0f;
 	
 	private Transform groundDetector;
-	private bool grounded = false;	
+	private bool grounded = false;
+	private bool onEnemy = false;
 
 	private Transform leftWallDetector;
 	private Transform rightWallDetector;
@@ -28,6 +29,7 @@ public class PlayerScript : MonoBehaviour {
 	public float sizeScaleFactor = 0.5f;
 
 	public int health = 100;
+	public int damage = 1;
 	
 	void Awake()
 	{
@@ -41,6 +43,7 @@ public class PlayerScript : MonoBehaviour {
 	{
 		// The player is grounded if a linecast to the groundcheck position hits anything on the ground layer.
 		grounded = Physics2D.Linecast(transform.position, groundDetector.position, 1 << LayerMask.NameToLayer("Terrain")); 
+		onEnemy = Physics2D.Linecast (transform.position, groundDetector.position, 1 << LayerMask.NameToLayer("Enemies"));
 		leftWalled = Physics2D.Linecast(transform.position, rightWallDetector.position, 1 << LayerMask.NameToLayer("Terrain"));
 		rightWalled = Physics2D.Linecast(transform.position, leftWallDetector.position, 1 << LayerMask.NameToLayer("Terrain")); 
 		
@@ -108,20 +111,26 @@ public class PlayerScript : MonoBehaviour {
 	}
 
 	void OnCollisionStay2D (Collision2D c) {
-		if(c.gameObject.name == "Grate" && size == 3) {
+		if(c.gameObject.name == "Grate" && (size == 3 || c.gameObject.GetComponent<GrateScript>().broken)) {
 			c.gameObject.collider2D.enabled = false;
 		}
-		//Debug.Log ("Collision");
 	}
 
 	void OnCollisionEnter2D (Collision2D c) {
 		if(c.gameObject.tag == "Enemy") {
-			health--;
-			Debug.Log (health);
+			if(!onEnemy) {
+				health -= (c.gameObject.GetComponent<EnemyScript>()).damage;
 
-			if(health == 0) {
-				Destroy (this.gameObject);
+				if(health == 0) {
+					Destroy (this.gameObject);
+				}
+			} else {
+				(c.gameObject.GetComponent<EnemyScript>()).takeDamage(getDamage());
 			}
 		}
+	}
+
+	int getDamage() {
+		return damage;
 	}
 }

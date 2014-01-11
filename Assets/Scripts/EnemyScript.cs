@@ -19,11 +19,15 @@ public class EnemyScript : MonoBehaviour {
 	private Transform leftWallDetector;
 	private Transform rightWallDetector;
 	private bool walled = false;
+	public bool nearPlayer = false;
 	
 	public int size = 2;
 	public float sizeScaleFactor = 0.5f;
 
 	private float h = 1.0f;
+
+	public int damage = 1;
+	public int health = 3;
 
 	void Awake()
 	{
@@ -52,4 +56,23 @@ public class EnemyScript : MonoBehaviour {
 			rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.x) * maxSpeed, rigidbody2D.velocity.y);
 	}
 
+	public void takeDamage(int d) {
+		health -= d;
+
+		if(health <= 0) {
+			Destroy (this.gameObject);
+		}
+	}
+
+	void OnCollisionEnter2D (Collision2D c) {
+		if(c.gameObject.tag == "Player") {
+			h *= -1.0f;
+		}
+	}
+
+	void OnCollisionExit2D (Collision2D c) {
+		if(c.gameObject.tag == "Player") {
+			h *= -1.0f;
+		}
+	}
 }
