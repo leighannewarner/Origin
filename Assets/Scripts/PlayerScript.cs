@@ -87,10 +87,20 @@ public class PlayerScript : MonoBehaviour {
 		if(jump)
 		{	
 			if(leftWalled && !grounded) {
-				rigidbody2D.AddForce(new Vector2(-1f*Mathf.Sqrt(jumpForce*4), Mathf.Sqrt(jumpForce*4)));
+				if(rigidbody2D.velocity.y > 0) {
+					rigidbody2D.AddForce(new Vector2((-1f*jumpForce), Mathf.Sqrt(jumpForce*4)));
+				} else {
+					rigidbody2D.AddForce(new Vector2((-1f*jumpForce), Mathf.Sqrt(jumpForce*4)));
+					rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, rigidbody2D.velocity.y*-1);
+				}
 				jump = false;
 			} else if(rightWalled && !grounded) {
-				rigidbody2D.AddForce(new Vector2(Mathf.Sqrt(jumpForce*4), Mathf.Sqrt(jumpForce*4)));
+				if(rigidbody2D.velocity.y < 0) {
+					rigidbody2D.AddForce(new Vector2((jumpForce), Mathf.Sqrt(jumpForce*4)));
+				} else {
+					rigidbody2D.AddForce(new Vector2((jumpForce), Mathf.Sqrt(jumpForce*4)));
+					rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, rigidbody2D.velocity.y*-1);
+				}
 				jump = false;
 			} else {
 				rigidbody2D.AddForce(new Vector2(0f, jumpForce));
@@ -121,11 +131,13 @@ public class PlayerScript : MonoBehaviour {
 			if(!onEnemy) {
 				health -= (c.gameObject.GetComponent<EnemyScript>()).damage;
 
-				if(health == 0) {
+				if(health <= 0) {
 					Destroy (this.gameObject);
 				}
+				Debug.Log ("take damage!");
 			} else {
 				(c.gameObject.GetComponent<EnemyScript>()).takeDamage(getDamage());
+				Debug.Log ("damage enemy!");
 			}
 		}
 	}
