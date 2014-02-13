@@ -195,7 +195,7 @@ MonoBehaviour:
   jumpForce: 1000
   nearPlayer: 0
   size: 2
-  sizeScaleFactor: .5
+  sizeScaleFactor: 0
   damage: 1
   health: 1
 --- !u!114 &11400002

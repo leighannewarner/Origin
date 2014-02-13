@@ -1,0 +1,346 @@
+fileFormatVersion: 2
+guid: aaf8eacd8996d472890da5a9fd27a3a6
+TextureImporter:
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 1024
+  textureSettings:
+    filterMode: -1
+    aniso: 1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings:
+  - buildTarget: iPhone
+    maxTextureSize: 1024
+    textureFormat: -2
+    compressionQuality: 50
+  spriteSheet:
+    sprites:
+    - name: playersprites_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 660
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_1
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 660
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_2
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 660
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_3
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 660
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_4
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 660
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_5
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 660
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 550
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_7
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 550
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_8
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 550
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_9
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 550
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_10
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 550
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_11
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 550
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_12
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 550
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_13
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 550
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_14
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 440
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_15
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 440
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_16
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 440
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_17
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 440
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_18
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 440
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_19
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 440
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_20
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 440
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_21
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 440
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_22
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 330
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_23
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 330
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_24
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 330
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_25
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 330
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_26
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 220
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_27
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 220
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_28
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 220
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_29
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 110
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_30
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 110
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_31
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+    - name: playersprites_32
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 0
+        width: 135
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+  spritePackingTag: 
+  userData: 

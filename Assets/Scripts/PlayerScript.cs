@@ -30,6 +30,8 @@ public class PlayerScript : MonoBehaviour {
 
 	public int health = 100;
 	public int damage = 1;
+
+	private Animator animator;
 	
 	void Awake()
 	{
@@ -37,6 +39,7 @@ public class PlayerScript : MonoBehaviour {
 		groundDetector = transform.Find("GroundDetector");
 		leftWallDetector = transform.Find("LeftWallDetector");
 		rightWallDetector = transform.Find("RightWallDetector");
+		animator = transform.Find("PlayerAnimations").GetComponent<Animator>();
 	}
 	
 	void Update()
@@ -65,6 +68,15 @@ public class PlayerScript : MonoBehaviour {
 	{
 		// Cache the horizontal input.
 		float h = Input.GetAxis("Horizontal");
+
+		animator.SetBool ("grounded", grounded);
+		if(h > 0) {
+			animator.SetInteger("direction", 1);
+		} else if (h < 0) {
+			animator.SetInteger("direction", -1);
+		} else {
+			animator.SetInteger("direction", 0);
+		}
 
 		if(leftWalled && size < 3) {
 			if(h * rigidbody2D.velocity.x < maxSpeed) 			
