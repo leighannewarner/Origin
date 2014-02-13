@@ -1,84 +1,92 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 /// <summary>
-/// Enemy generic behavior
+/// Player controller and behavior.
 /// </summary>
-public class EnemyScript : MonoBehaviour
-{
-	private bool hasSpawn;
-	private MoveScript moveScript;
-	private WeaponScript[] weapons;
+
+public class EnemyScript : MonoBehaviour {
 	
+	[HideInInspector]
+	public bool jump = false;			
+	
+	public float moveForce = 365f;
+	public float maxSpeed = 5f;	
+	public float currentMaxSpeed = 2f;
+	public float jumpForce = 1000f;
+	
+	//private Transform groundDetector;		
+	//private bool grounded = false;
+	private Transform leftWallDetector;
+	private Transform rightWallDetector;
+	private bool walled = false;
+	public bool nearPlayer = false;
+	
+	public int size = 2;
+	public float sizeScaleFactor = 0.5f;
+
+	private float h = 1.0f;
+
+	public int damage = 1;
+	public int health = 3;
+	//private int attack = 0;
+	//private int delay = 1;
+
 	void Awake()
 	{
-		// Retrieve the weapon only once
-		weapons = GetComponentsInChildren<WeaponScript>();
-		
-		// Retrieve scripts to disable when not spawn
-		moveScript = GetComponent<MoveScript>();
-	}
-	
-	// 1 - Disable everything
-	void Start()
-	{
-		hasSpawn = false;
-		
-		// Disable everything
-		// -- collider
-		collider2D.enabled = false;
-		// -- Moving
-		moveScript.enabled = false;
-		// -- Shooting
-		foreach (WeaponScript weapon in weapons)
-		{
-			weapon.enabled = false;
-		}
+		// Setting up references.
+		//groundDetector = transform.Find("GroundDetector");
+		leftWallDetector = transform.Find("LeftWallDetector");
+		rightWallDetector = transform.Find("RightWallDetector");
+		currentMaxSpeed = maxSpeed;
 	}
 	
 	void Update()
 	{
-		// 2 - Check if the enemy has spawned.
-		if (hasSpawn == false)
-		{
-			if (renderer.IsVisibleFrom(Camera.main))
-			{
-				Spawn();
-			}
-		}
-		else
-		{
-			// Auto-fire
-			foreach (WeaponScript weapon in weapons)
-			{
-				if (weapon != null && weapon.enabled && weapon.CanAttack)
-				{
-					weapon.Attack(true);
-					SoundEffectsHelper.Instance.MakeEnemyShotSound();
-				}
-			}
-			
-			// 4 - Out of the camera ? Destroy the game object.
-			if (renderer.IsVisibleFrom(Camera.main) == false)
-			{
-				Destroy(gameObject);
-			}
-		}
+		// The player is grounded if a linecast to the groundcheck position hits anything on the ground layer.
+		//grounded = Physics2D.Linecast(transform.position, groundDetector.position, 1 << LayerMask.NameToLayer("Terrain"));  
+		walled = (Physics2D.Linecast(transform.position, rightWallDetector.position, 1 << LayerMask.NameToLayer("Terrain")) || Physics2D.Linecast(transform.position, leftWallDetector.position, 1 << LayerMask.NameToLayer("Terrain"))); 
 	}
 	
-	// 3 - Activate itself.
-	private void Spawn()
+	void FixedUpdate ()
 	{
-		hasSpawn = true;
-		
-		// Enable everything
-		// -- Collider
-		collider2D.enabled = true;
-		// -- Moving
-		moveScript.enabled = true;
-		// -- Shooting
-		foreach (WeaponScript weapon in weapons)
-		{
-			weapon.enabled = true;
+		if(walled) {
+			h *= -1.0f;
 		}
+
+		if(h * rigidbody2D.velocity.x < currentMaxSpeed) {			
+			rigidbody2D.AddForce(Vector2.right * h * moveForce); 	
+		}
+
+		if(Mathf.Abs(rigidbody2D.velocity.x) > maxSpeed) {
+			rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.x) * currentMaxSpeed, rigidbody2D.velocity.y);
+		}
+
+		Debug.Log (currentMaxSpeed);
+	}
+
+	public void takeDamage(int d) {
+		health -= d;
+
+		if(health <= 0) {
+			Destroy (gameObject);
+		}
+	}
+
+	void OnCollisionEnter2D (Collision2D c) {
+		if(c.gameObject.tag == "Player") {
+			h *= -1.0f;
+		}
+	}
+
+	void OnCollisionExit2D (Collision2D c) {
+		if(c.gameObject.tag == "Player") {
+			currentMaxSpeed = maxSpeed;
+		}
+	}
+
+
+	public void reverse() {
+		h *= -1.0f;
 	}
 }

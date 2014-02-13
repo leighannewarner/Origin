@@ -1,86 +1,160 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 /// <summary>
-/// Player controller and behavior
+/// Player controller and behavior.
 /// </summary>
-public class PlayerScript : MonoBehaviour
-{
-  /// <summary>
-  /// 1 - The speed of the ship
-  /// </summary>
-  public Vector2 speed = new Vector2(50, 50);
 
-  // 2 - Store the movement
-  private Vector2 movement;
+public class PlayerScript : MonoBehaviour {
 
-  void Update()
-  {
-    // 3 - Retrieve axis information
-    float inputX = Input.GetAxis("Horizontal");
-    float inputY = Input.GetAxis("Vertical");
-
-    // 4 - Movement per direction
-    movement = new Vector2(
-      speed.x * inputX,
-      speed.y * inputY);
-
-	// 5 - Shooting
-	bool shoot = Input.GetButtonDown("Fire1");
-	shoot |= Input.GetButtonDown("Fire2");
-	// Careful: For Mac users, ctrl + arrow is a bad idea
+	[HideInInspector]
+	public bool jump = false;			
 	
-	if (shoot)
+	public float moveForce = 365f;			
+	public float maxSpeed = 5f;			
+	public float jumpForce = 1000f;	
+	public float speedx = 0f;
+	public float speedy = 0f;
+	
+	private Transform groundDetector;
+	private bool grounded = false;
+	private bool onEnemy = false;
+
+	private Transform leftWallDetector;
+	private Transform rightWallDetector;
+	private bool leftWalled = false;
+	private bool rightWalled = false;
+
+	public int size = 2;
+	public float sizeScaleFactor = 0.5f;
+
+	public int health = 100;
+	public int damage = 1;
+
+	private Animator animator;
+	
+	void Awake()
 	{
-		WeaponScript weapon = GetComponent<WeaponScript>();
-		if (weapon != null)
-		{
-			// false because the player is not an enemy
-			weapon.Attack(false);
-			SoundEffectsHelper.Instance.MakePlayerShotSound();
+		// Setting up references.
+		groundDetector = transform.Find("GroundDetector");
+		leftWallDetector = transform.Find("LeftWallDetector");
+		rightWallDetector = transform.Find("RightWallDetector");
+		animator = transform.Find("PlayerAnimations").GetComponent<Animator>();
+	}
+	
+	void Update()
+	{
+		// The player is grounded if a linecast to the groundcheck position hits anything on the ground layer.
+		grounded = Physics2D.Linecast(transform.position, groundDetector.position, 1 << LayerMask.NameToLayer("Terrain")); 
+		onEnemy = Physics2D.Linecast (transform.position, groundDetector.position, 1 << LayerMask.NameToLayer("Enemies"));
+		leftWalled = Physics2D.Linecast(transform.position, rightWallDetector.position, 1 << LayerMask.NameToLayer("Terrain"));
+		rightWalled = Physics2D.Linecast(transform.position, leftWallDetector.position, 1 << LayerMask.NameToLayer("Terrain")); 
+		
+		// If the jump button is pressed and the player is grounded then the player should jump.
+		if(Input.GetButtonDown("Jump")) {
+			if(grounded || leftWalled || rightWalled) {
+				jump = true;
+			}
+		}
+
+		if(Input.GetMouseButtonDown(0) && size > 1) {
+			decreaseSize();
+		} else if(Input.GetMouseButtonDown(1) && size < 3) {
+			increaseSize();
+		}
+	}
+	
+	void FixedUpdate ()
+	{
+		// Cache the horizontal input.
+		float h = Input.GetAxis("Horizontal");
+
+		animator.SetBool ("grounded", grounded);
+		if(h > 0) {
+			animator.SetInteger("direction", 1);
+		} else if (h < 0) {
+			animator.SetInteger("direction", -1);
+		} else {
+			animator.SetInteger("direction", 0);
+		}
+
+		if(leftWalled && size < 3) {
+			if(h * rigidbody2D.velocity.x < maxSpeed) 			
+				rigidbody2D.AddForce(Vector2.up * h * moveForce); 		 		
+			if(Mathf.Abs(rigidbody2D.velocity.x) > maxSpeed)
+				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, Mathf.Sign(rigidbody2D.velocity.y) * maxSpeed);
+		} else if(rightWalled && size < 3) {
+			if(Mathf.Abs(h * rigidbody2D.velocity.x) < maxSpeed) 			
+				rigidbody2D.AddForce(Vector2.up * h * moveForce * -1f); 		 		
+			if(Mathf.Abs(rigidbody2D.velocity.x) > maxSpeed)
+				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, Mathf.Sign(rigidbody2D.velocity.y) * maxSpeed *-1);
+		} else {
+			if(h * rigidbody2D.velocity.x < maxSpeed) 			
+				rigidbody2D.AddForce(Vector2.right * h * moveForce); 		 		
+			if(Mathf.Abs(rigidbody2D.velocity.x) > maxSpeed)
+				rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.x) * maxSpeed, rigidbody2D.velocity.y);
+		}
+
+		// If the player should jump...
+		if(jump)
+		{	
+			if(leftWalled && !grounded) {
+				if(rigidbody2D.velocity.y > 0) {
+					rigidbody2D.AddForce(new Vector2((-1f*jumpForce), Mathf.Sqrt(jumpForce*4)));
+				} else {
+					rigidbody2D.AddForce(new Vector2((-1f*jumpForce), Mathf.Sqrt(jumpForce*4)));
+					rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, rigidbody2D.velocity.y*-1);
+				}
+				jump = false;
+			} else if(rightWalled && !grounded) {
+				if(rigidbody2D.velocity.y < 0) {
+					rigidbody2D.AddForce(new Vector2((jumpForce), Mathf.Sqrt(jumpForce*4)));
+				} else {
+					rigidbody2D.AddForce(new Vector2((jumpForce), Mathf.Sqrt(jumpForce*4)));
+					rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, rigidbody2D.velocity.y*-1);
+				}
+				jump = false;
+			} else {
+				rigidbody2D.AddForce(new Vector2(0f, jumpForce));
+				jump = false;
+			}
 		}
 	}
 
-		// 6 - Make sure we are not outside the camera bounds
-		var dist = (transform.position - Camera.main.transform.position).z;
-		
-		var leftBorder = Camera.main.ViewportToWorldPoint(
-			new Vector3(0, 0, dist)
-			).x;
-		
-		var rightBorder = Camera.main.ViewportToWorldPoint(
-			new Vector3(1, 0, dist)
-			).x;
-		
-		var topBorder = Camera.main.ViewportToWorldPoint(
-			new Vector3(0, 0, dist)
-			).y;
-		
-		var bottomBorder = Camera.main.ViewportToWorldPoint(
-			new Vector3(0, 1, dist)
-			).y;
-		
-		transform.position = new Vector3(
-			Mathf.Clamp(transform.position.x, leftBorder, rightBorder),
-			Mathf.Clamp(transform.position.y, topBorder, bottomBorder),
-			transform.position.z
-			);
-		
-		// End of the update method
+	void decreaseSize() {
+		size -= 1;
+		transform.localScale -= new Vector3(sizeScaleFactor,sizeScaleFactor,0);
+	}
+	
+	void increaseSize() {
+		size += 1;
+		transform.localScale += new Vector3(sizeScaleFactor,sizeScaleFactor,0);
 
-  }
+	}
 
-  void FixedUpdate()
-  {
-    // 5 - Move the game object
-    rigidbody2D.velocity = movement;
-  }
+	void OnCollisionStay2D (Collision2D c) {
+		if(c.gameObject.name == "Grate" && (size == 3 || c.gameObject.GetComponent<GrateScript>().broken)) {
+			c.gameObject.collider2D.enabled = false;
+		}
+	}
 
-  void OnDestroy()
-  {
-		// Game Over.
-		// Add the script to the parent because the current game
-		// object is likely going to be destroyed immediately.
-		transform.parent.gameObject.AddComponent<GameOverScript>();
-  }
+	void OnCollisionEnter2D (Collision2D c) {
+		if(c.gameObject.tag == "Enemy") {
+			if(!onEnemy) {
+				health -= (c.gameObject.GetComponent<EnemyScript>()).damage;
 
+				if(health <= 0) {
+					Destroy (this.gameObject);
+				}
+				Debug.Log ("take damage!");
+			} else {
+				(c.gameObject.GetComponent<EnemyScript>()).takeDamage(getDamage());
+				Debug.Log ("damage enemy!");
+			}
+		}
+	}
+
+	int getDamage() {
+		return damage;
+	}
 }
