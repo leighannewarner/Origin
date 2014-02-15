@@ -78,12 +78,13 @@ public class PlayerScript : MonoBehaviour {
 			animator.SetInteger("direction", 0);
 		}
 
-		if(leftWalled && size < 3) {
+		//Sticks to the wall or applies the force horizontally to make him walk
+		if(leftWalled && size < 3 && !grounded) {
 			if(h * rigidbody2D.velocity.x < maxSpeed) 			
 				rigidbody2D.AddForce(Vector2.up * h * moveForce); 		 		
 			if(Mathf.Abs(rigidbody2D.velocity.x) > maxSpeed)
 				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, Mathf.Sign(rigidbody2D.velocity.y) * maxSpeed);
-		} else if(rightWalled && size < 3) {
+		} else if(rightWalled && size < 3 && !grounded) {
 			if(Mathf.Abs(h * rigidbody2D.velocity.x) < maxSpeed) 			
 				rigidbody2D.AddForce(Vector2.up * h * moveForce * -1f); 		 		
 			if(Mathf.Abs(rigidbody2D.velocity.x) > maxSpeed)

@@ -61,8 +61,6 @@ public class EnemyScript : MonoBehaviour {
 		if(Mathf.Abs(rigidbody2D.velocity.x) > maxSpeed) {
 			rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.x) * currentMaxSpeed, rigidbody2D.velocity.y);
 		}
-
-		Debug.Log (currentMaxSpeed);
 	}
 
 	public void takeDamage(int d) {
