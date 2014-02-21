@@ -32,6 +32,7 @@ public class PlayerScript : MonoBehaviour {
 	public int damage = 1;
 
 	private Animator animator;
+	public Transform currentCheckpoint;
 	
 	void Awake()
 	{
@@ -40,6 +41,9 @@ public class PlayerScript : MonoBehaviour {
 		leftWallDetector = transform.Find("LeftWallDetector");
 		rightWallDetector = transform.Find("RightWallDetector");
 		animator = transform.Find("PlayerAnimations").GetComponent<Animator>();
+		Physics2D.IgnoreLayerCollision(10, 11, true);
+
+		//SET CURRENT CHECKPOINT TO BEGINNING
 	}
 	
 	void Update()
@@ -101,9 +105,9 @@ public class PlayerScript : MonoBehaviour {
 		{	
 			if(leftWalled && !grounded) {
 				if(rigidbody2D.velocity.y > 0) {
-					rigidbody2D.AddForce(new Vector2((-1f*jumpForce), Mathf.Sqrt(jumpForce*4)));
+					rigidbody2D.AddForce(new Vector2((-1f*jumpForce/2), Mathf.Sqrt(jumpForce)));
 				} else {
-					rigidbody2D.AddForce(new Vector2((-1f*jumpForce), Mathf.Sqrt(jumpForce*4)));
+					rigidbody2D.AddForce(new Vector2((-1f*jumpForce/2), Mathf.Sqrt(jumpForce)));
 					rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, rigidbody2D.velocity.y*-1);
 				}
 				jump = false;
@@ -158,4 +162,13 @@ public class PlayerScript : MonoBehaviour {
 	int getDamage() {
 		return damage;
 	}
+	
+	public void teleportToCheckpoint(Transform checkpoint) {
+		this.transform.position = checkpoint.position;
+	}
+	public 
+	void setCheckpoint(Transform checkpoint) {
+		this.currentCheckpoint = checkpoint;
+	}
+
 }
