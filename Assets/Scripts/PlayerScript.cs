@@ -42,8 +42,6 @@ public class PlayerScript : MonoBehaviour {
 		rightWallDetector = transform.Find("RightWallDetector");
 		animator = transform.Find("PlayerAnimations").GetComponent<Animator>();
 		Physics2D.IgnoreLayerCollision(10, 11, true);
-
-		//SET CURRENT CHECKPOINT TO BEGINNING
 	}
 	
 	void Update()
@@ -144,6 +142,7 @@ public class PlayerScript : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D (Collision2D c) {
+		//Debug.Log ("Collision enter.");
 		if(c.gameObject.tag == "Enemy") {
 			if(!onEnemy) {
 				health -= (c.gameObject.GetComponent<EnemyScript>()).damage;
@@ -156,6 +155,8 @@ public class PlayerScript : MonoBehaviour {
 				(c.gameObject.GetComponent<EnemyScript>()).takeDamage(getDamage());
 				Debug.Log ("damage enemy!");
 			}
+		} else if(c.gameObject.tag == "Respawn") {
+			teleportToCheckpoint();
 		}
 	}
 
@@ -163,12 +164,13 @@ public class PlayerScript : MonoBehaviour {
 		return damage;
 	}
 	
-	public void teleportToCheckpoint(Transform checkpoint) {
-		this.transform.position = checkpoint.position;
+	public void teleportToCheckpoint() {
+		this.transform.position = this.currentCheckpoint.position;
 	}
-	public 
-	void setCheckpoint(Transform checkpoint) {
+
+	public void setCheckpoint(Transform checkpoint) {
 		this.currentCheckpoint = checkpoint;
+
 	}
 
 }
