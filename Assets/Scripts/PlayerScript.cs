@@ -6,7 +6,7 @@ using System.Collections;
 /// </summary>
 
 public class PlayerScript : MonoBehaviour {
-
+	
 	[HideInInspector]
 	public bool jump = false;			
 	
@@ -19,18 +19,18 @@ public class PlayerScript : MonoBehaviour {
 	private Transform groundDetector;
 	private bool grounded = false;
 	private bool onEnemy = false;
-
+	
 	private Transform leftWallDetector;
 	private Transform rightWallDetector;
 	private bool leftWalled = false;
 	private bool rightWalled = false;
-
+	
 	public int size = 2;
 	public float sizeScaleFactor = 0.5f;
-
+	
 	public int health = 100;
 	public int damage = 1;
-
+	
 	private Animator animator;
 	public Transform currentCheckpoint;
 	
@@ -58,7 +58,7 @@ public class PlayerScript : MonoBehaviour {
 				jump = true;
 			}
 		}
-
+		
 		if(Input.GetMouseButtonDown(0) && size > 1) {
 			decreaseSize();
 		} else if(Input.GetMouseButtonDown(1) && size < 3) {
@@ -70,7 +70,7 @@ public class PlayerScript : MonoBehaviour {
 	{
 		// Cache the horizontal input.
 		float h = Input.GetAxis("Horizontal");
-
+		
 		animator.SetBool ("grounded", grounded);
 		if(h > 0) {
 			animator.SetInteger("direction", 1);
@@ -79,7 +79,7 @@ public class PlayerScript : MonoBehaviour {
 		} else {
 			animator.SetInteger("direction", 0);
 		}
-
+		
 		//Sticks to the wall or applies the force horizontally to make him walk
 		if(leftWalled && size < 3 && !grounded) {
 			if(h * rigidbody2D.velocity.x < maxSpeed) 			
@@ -97,7 +97,7 @@ public class PlayerScript : MonoBehaviour {
 			if(Mathf.Abs(rigidbody2D.velocity.x) > maxSpeed)
 				rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.x) * maxSpeed, rigidbody2D.velocity.y);
 		}
-
+		
 		// If the player should jump...
 		if(jump)
 		{	
@@ -123,7 +123,7 @@ public class PlayerScript : MonoBehaviour {
 			}
 		}
 	}
-
+	
 	void decreaseSize() {
 		size -= 1;
 		transform.localScale -= new Vector3(sizeScaleFactor,sizeScaleFactor,0);
@@ -132,21 +132,21 @@ public class PlayerScript : MonoBehaviour {
 	void increaseSize() {
 		size += 1;
 		transform.localScale += new Vector3(sizeScaleFactor,sizeScaleFactor,0);
-
+		
 	}
-
+	
 	void OnCollisionStay2D (Collision2D c) {
 		if(c.gameObject.name == "Grate" && (size == 3 || c.gameObject.GetComponent<GrateScript>().broken)) {
 			c.gameObject.collider2D.enabled = false;
 		}
 	}
-
+	
 	void OnCollisionEnter2D (Collision2D c) {
 		//Debug.Log ("Collision enter.");
 		if(c.gameObject.tag == "Enemy") {
 			if(!onEnemy) {
 				health -= (c.gameObject.GetComponent<EnemyScript>()).damage;
-
+				
 				if(health <= 0) {
 					Destroy (this.gameObject);
 				}
@@ -159,7 +159,7 @@ public class PlayerScript : MonoBehaviour {
 			teleportToCheckpoint();
 		}
 	}
-
+	
 	int getDamage() {
 		return damage;
 	}
@@ -167,10 +167,10 @@ public class PlayerScript : MonoBehaviour {
 	public void teleportToCheckpoint() {
 		this.transform.position = this.currentCheckpoint.position;
 	}
-
+	
 	public void setCheckpoint(Transform checkpoint) {
 		this.currentCheckpoint = checkpoint;
-
+		
 	}
-
+	
 }
