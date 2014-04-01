@@ -11,7 +11,9 @@ different layers, and linecasting specific detectors against only those layers, 
 public class HeroControl : MonoBehaviour {
 
 	
-	//
+	//Animation Controls
+	private Animator animator;
+
 	public float MaxHSpeed; //Maximum Horizontal Move Speed
 	public float MaxVSpeed; //Maximum Vertical Move Speed
 	public float MoveVMag;  //Magnitude of force applied when moving vertically (Up or Down a wall, not jumping)
@@ -50,12 +52,13 @@ public class HeroControl : MonoBehaviour {
 				value=0;
 			if(value>2)
 				value=2;
-		if(value==2)
+			if(value==2)
 			{		
 				rigidbody2D.gravityScale=1;
 				WallStick=false;			
 				CeilingStick=false;
 			}
+
 			_size=value;
 			transform.localScale=new Vector2(1+value,1+value);
 		}
@@ -104,6 +107,7 @@ public class HeroControl : MonoBehaviour {
 		RightCheck=transform.Find("Detector.Right");
 		LeftCheck=transform.Find("Detector.Left");
 		CeilingCheck=transform.Find("Detector.Ceiling");
+		animator = transform.Find("PlayerAnimations").GetComponent<Animator>();
 	}
 	
 	// Update is called once per frame
@@ -244,7 +248,18 @@ public class HeroControl : MonoBehaviour {
 		{
 		
 			rigidbody2D.gravityScale=1;
-		}	
+		}
+
+		//Animation Controllers
+		animator.SetBool ("grounded", !FreeFall);
+		if(Input.GetAxis("Horizontal") > 0) {
+			animator.SetInteger("direction", 1);
+		} else if (Input.GetAxis("Horizontal") < 0) {
+			animator.SetInteger("direction", -1);
+		} else {
+			animator.SetInteger("direction", 0);
+		}
+
 	}
 	void OnCollisionEnter2D(Collision2D col)
 	{	
