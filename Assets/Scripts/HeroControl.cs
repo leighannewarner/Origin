@@ -39,30 +39,38 @@ public class HeroControl : MonoBehaviour {
 	bool TouchCeiling;          //Inidcates whether the player is touching the ceiling.
 	bool WallStick;             //Inidcates whether the player should be stuck to a wall surface
 	bool CeilingStick;          //Indicates whether the player should be stuck to the ceiling
-	int _size;                  //Backing for Size property
+	int size = 2;                  //Backing for Size property
+	public float sizeScaleFactor = 0.5f;
 	//Controls the size of the player. When a player switches from a size that is able to stick to a wall to one that is not,
 	//Cancels all "stickyness". Also sets the actual scale of the players transform.
-	int Size                    
+	/*int Size                    
 	{
 		get{
 			 return _size;
 		}
 		set{
-			if(value<0)
+			if(value<0) {
 				value=0;
-			if(value>2)
+				transform.localScale -= new Vector3(sizeScaleFactor,sizeScaleFactor,0);
+			}
+
+			if(value>2) {
 				value=2;
+				transform.localScale -= new Vector3(sizeScaleFactor*value,sizeScaleFactor*value,0);
+			}
+
 			if(value==2)
-			{		
+			{	
+				transform.localScale -= new Vector3(sizeScaleFactor*value,sizeScaleFactor*value,0);
 				rigidbody2D.gravityScale=1;
 				WallStick=false;			
 				CeilingStick=false;
 			}
 
 			_size=value;
-			transform.localScale=new Vector2(1+value,1+value);
+			//transform.localScale=new Vector2(1+value,1+value);
 		}
-	}
+	}*/
 	
 	//Shortcut for checking if the player is in freefall (Not touching any walls and is in the air)
 	bool FreeFall
@@ -132,11 +140,11 @@ public class HeroControl : MonoBehaviour {
 		//Handle Size Switches.
 		if(Input.GetButtonDown("Fire1"))
 		{
-			Size++;
+			increaseSize();
 		}
 		if(Input.GetButtonDown("Fire2"))
 		{
-			Size--;
+			decreaseSize();
 		}
 	}
 	void FixedUpdate()
@@ -167,7 +175,7 @@ public class HeroControl : MonoBehaviour {
 					
 				}
 				else{
-				if(Size==2){
+				if(size==2){
 					//If we're too big to stick to walls
 					if(TouchWallToRight&&(x>0)){
 						//if we're trying to go right and we're touching a right wall, don't assign any force so friction doesn't act to 
@@ -268,7 +276,7 @@ public class HeroControl : MonoBehaviour {
 		{
 			if(!TouchGround)
 			{
-				if(Size!=2){
+				if(size!=2){
 					//if we've just collided with a wall and we're not touching the ground and we're a size
 					//that allows it, stick to the wall.
 					rigidbody2D.velocity.Set (0,0);
@@ -280,7 +288,7 @@ public class HeroControl : MonoBehaviour {
 		}
 		else if(col.collider.tag=="Ceiling"){
 			if(!TouchGround){
-				if(Size!=2){
+				if(size!=2){
 					//if we've just collided with the ceiling and we're not touching the ground and we're a size
 					//that allows it, stick to the ceiling
 					rigidbody2D.velocity.Set (0,0);
@@ -323,4 +331,22 @@ public class HeroControl : MonoBehaviour {
 			CeilingStick=false;
 		}
 	}
+
+	void decreaseSize() {
+		if(size > 1) {
+			size -= 1;
+			transform.localScale -= new Vector3(sizeScaleFactor,sizeScaleFactor,0);
+			Debug.Log(size);
+		}
+	}
+	
+	void increaseSize() {
+		if(size < 3) {
+			size += 1;
+			transform.localScale += new Vector3(sizeScaleFactor,sizeScaleFactor,0);
+			Debug.Log(size);
+		}
+		
+	}
+
 }
