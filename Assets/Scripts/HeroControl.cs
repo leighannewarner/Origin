@@ -39,7 +39,7 @@ public class HeroControl : MonoBehaviour {
 	bool TouchCeiling;          //Inidcates whether the player is touching the ceiling.
 	bool WallStick;             //Inidcates whether the player should be stuck to a wall surface
 	bool CeilingStick;          //Indicates whether the player should be stuck to the ceiling
-	int size = 2;                  //Backing for Size property
+	int size = 1;                  //Backing for Size property
 	public float sizeScaleFactor = 0.5f;
 	//Controls the size of the player. When a player switches from a size that is able to stick to a wall to one that is not,
 	//Cancels all "stickyness". Also sets the actual scale of the players transform.
@@ -333,7 +333,7 @@ public class HeroControl : MonoBehaviour {
 	}
 
 	void decreaseSize() {
-		if(size > 1) {
+		if(size > 0) {
 			size -= 1;
 			transform.localScale -= new Vector3(sizeScaleFactor,sizeScaleFactor,0);
 			Debug.Log(size);
@@ -341,12 +341,18 @@ public class HeroControl : MonoBehaviour {
 	}
 	
 	void increaseSize() {
-		if(size < 3) {
+		if(size < 2) {
 			size += 1;
 			transform.localScale += new Vector3(sizeScaleFactor,sizeScaleFactor,0);
 			Debug.Log(size);
 		}
-		
+
+		//reset gravity
+		if(size == 2) {
+			rigidbody2D.gravityScale=1;
+			WallStick=false;			
+			CeilingStick=false;
+		}
 	}
 
 }
