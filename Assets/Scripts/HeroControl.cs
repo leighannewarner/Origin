@@ -20,6 +20,14 @@ public class HeroControl : MonoBehaviour {
 	public float MoveHMag;  //Magnitude of force applied when moving horizontally (left or right on ground or ceiling, scaled while in air)
 	public float JumpHMag;  //Horizontal Magnitude of force applied when jumping off a wall. Not used when Jumping off a vertical surface.
 	public float JumpVMag;  //Vertical Magnitude of force applied when jumping off the ground. Scaled value is used when dismounting from the ceiling. 
+
+	public float MaxHSpeed_const; //Maximum Horizontal Move Speed
+	public float MaxVSpeed_const; //Maximum Vertical Move Speed
+	public float MoveVMag_const;  //Magnitude of force applied when moving vertically (Up or Down a wall, not jumping)
+	public float MoveHMag_const;  //Magnitude of force applied when moving horizontally (left or right on ground or ceiling, scaled while in air)
+	public float JumpHMag_const;  //Horizontal Magnitude of force applied when jumping off a wall. Not used when Jumping off a vertical surface.
+	public float JumpVMag_const;
+
 	public float InAirHScale;
 
 	
@@ -41,36 +49,7 @@ public class HeroControl : MonoBehaviour {
 	bool CeilingStick;          //Indicates whether the player should be stuck to the ceiling
 	int size = 1;                  //Backing for Size property
 	public float sizeScaleFactor = 0.5f;
-	//Controls the size of the player. When a player switches from a size that is able to stick to a wall to one that is not,
-	//Cancels all "stickyness". Also sets the actual scale of the players transform.
-	/*int Size                    
-	{
-		get{
-			 return _size;
-		}
-		set{
-			if(value<0) {
-				value=0;
-				transform.localScale -= new Vector3(sizeScaleFactor,sizeScaleFactor,0);
-			}
-
-			if(value>2) {
-				value=2;
-				transform.localScale -= new Vector3(sizeScaleFactor*value,sizeScaleFactor*value,0);
-			}
-
-			if(value==2)
-			{	
-				transform.localScale -= new Vector3(sizeScaleFactor*value,sizeScaleFactor*value,0);
-				rigidbody2D.gravityScale=1;
-				WallStick=false;			
-				CeilingStick=false;
-			}
-
-			_size=value;
-			//transform.localScale=new Vector2(1+value,1+value);
-		}
-	}*/
+	public float speedScaleFactor = 0.75f;
 	
 	//Shortcut for checking if the player is in freefall (Not touching any walls and is in the air)
 	bool FreeFall
@@ -116,6 +95,13 @@ public class HeroControl : MonoBehaviour {
 		LeftCheck=transform.Find("Detector.Left");
 		CeilingCheck=transform.Find("Detector.Ceiling");
 		animator = transform.Find("PlayerAnimations").GetComponent<Animator>();
+
+		MaxHSpeed_const = MaxHSpeed; //Maximum Horizontal Move Speed
+		MaxVSpeed_const = MaxVSpeed; //Maximum Vertical Move Speed
+		MoveVMag_const = MoveVMag;  //Magnitude of force applied when moving vertically (Up or Down a wall, not jumping)
+		MoveHMag_const = MoveHMag;  //Magnitude of force applied when moving horizontally (left or right on ground or ceiling, scaled while in air)
+		JumpHMag_const = JumpHMag;  //Horizontal Magnitude of force applied when jumping off a wall. Not used when Jumping off a vertical surface.
+		JumpVMag_const = JumpVMag;
 	}
 	
 	// Update is called once per frame
@@ -268,6 +254,15 @@ public class HeroControl : MonoBehaviour {
 			animator.SetInteger("direction", 0);
 		}
 
+		//Rotate the sprite
+		if(TouchGround || FreeFall && transform.rotation.eulerAngles.x != 0) {
+			transform.Rotate (0, 0, 0);
+			Debug.Log ("Rotate to 0");
+		} else if(WallStick && TouchWallToLeft && transform.rotation.eulerAngles.x != 90) {
+			//transform.Rotate(90, 0, 0);
+			//Debug.Log ("Rotate to 90");
+		}
+
 	}
 	void OnCollisionEnter2D(Collision2D col)
 	{	
@@ -336,7 +331,7 @@ public class HeroControl : MonoBehaviour {
 		if(size > 0) {
 			size -= 1;
 			transform.localScale -= new Vector3(sizeScaleFactor,sizeScaleFactor,0);
-			Debug.Log(size);
+			setSpeedAndJumpParams();
 		}
 	}
 	
@@ -344,14 +339,48 @@ public class HeroControl : MonoBehaviour {
 		if(size < 2) {
 			size += 1;
 			transform.localScale += new Vector3(sizeScaleFactor,sizeScaleFactor,0);
-			Debug.Log(size);
+			MaxHSpeed += MaxHSpeed * sizeScaleFactor; //Maximum Horizontal Move Speed
+			MaxVSpeed += MaxVSpeed * sizeScaleFactor; //Maximum Vertical Move Speed
+			MoveVMag += MoveVMag * sizeScaleFactor;  //Magnitude of force applied when moving vertically (Up or Down a wall, not jumping)
+			MoveHMag += MoveHMag * sizeScaleFactor;  //Magnitude of force applied when moving horizontally (left or right on ground or ceiling, scaled while in air)
+			JumpHMag += JumpHMag * sizeScaleFactor;  //Horizontal Magnitude of force applied when jumping off a wall. Not used when Jumping off a vertical surface.
+			JumpVMag += JumpVMag * sizeScaleFactor;
+			setSpeedAndJumpParams();
 		}
-
+	
 		//reset gravity
 		if(size == 2) {
 			rigidbody2D.gravityScale=1;
 			WallStick=false;			
 			CeilingStick=false;
+		}
+	}
+
+	void setSpeedAndJumpParams() {
+		if(size == 0) {
+			MaxHSpeed -= MaxHSpeed_const * speedScaleFactor; //Maximum Horizontal Move Speed
+			MaxVSpeed -= MaxVSpeed_const * speedScaleFactor; //Maximum Vertical Move Speed
+			MoveVMag -= MoveVMag_const * speedScaleFactor;  //Magnitude of force applied when moving vertically (Up or Down a wall, not jumping)
+			MoveHMag -= MoveHMag_const * speedScaleFactor;  //Magnitude of force applied when moving horizontally (left or right on ground or ceiling, scaled while in air)
+			JumpHMag -= JumpHMag_const * speedScaleFactor;  //Horizontal Magnitude of force applied when jumping off a wall. Not used when Jumping off a vertical surface.
+			JumpVMag -= JumpVMag_const * speedScaleFactor;
+			Debug.Log (size + ": " + MaxHSpeed + " " + MaxVSpeed + " " + MoveVMag + " " + MoveHMag + " " + JumpHMag + " " + JumpVMag);
+		} else if(size == 1) {
+			MaxHSpeed = MaxHSpeed_const; //Maximum Horizontal Move Speed
+			MaxVSpeed = MaxVSpeed_const; //Maximum Vertical Move Speed
+			MoveVMag = MoveVMag_const;  //Magnitude of force applied when moving vertically (Up or Down a wall, not jumping)
+			MoveHMag = MoveHMag_const;  //Magnitude of force applied when moving horizontally (left or right on ground or ceiling, scaled while in air)
+			JumpHMag = JumpHMag_const;  //Horizontal Magnitude of force applied when jumping off a wall. Not used when Jumping off a vertical surface.
+			JumpVMag = JumpVMag_const;
+			Debug.Log (size + ": " + MaxHSpeed + " " + MaxVSpeed + " " + MoveVMag + " " + MoveHMag + " " + JumpHMag + " " + JumpVMag);
+		} else {
+			MaxHSpeed -= MaxHSpeed_const * speedScaleFactor; //Maximum Horizontal Move Speed
+			MaxVSpeed -= MaxVSpeed_const * speedScaleFactor; //Maximum Vertical Move Speed
+			MoveVMag -= MoveVMag_const * speedScaleFactor;  //Magnitude of force applied when moving vertically (Up or Down a wall, not jumping)
+			MoveHMag -= MoveHMag_const * speedScaleFactor;  //Magnitude of force applied when moving horizontally (left or right on ground or ceiling, scaled while in air)
+			JumpHMag -= JumpHMag_const * speedScaleFactor;  //Horizontal Magnitude of force applied when jumping off a wall. Not used when Jumping off a vertical surface.
+			JumpVMag -= JumpVMag_const * speedScaleFactor;
+			Debug.Log (size + ": " + MaxHSpeed + " " + MaxVSpeed + " " + MoveVMag + " " + MoveHMag + " " + JumpHMag + " " + JumpVMag);
 		}
 	}
 
