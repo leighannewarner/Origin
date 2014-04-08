@@ -20,12 +20,18 @@ public class HeroControl : MonoBehaviour {
 	public float MoveHMag;  //Magnitude of force applied when moving horizontally (left or right on ground or ceiling, scaled while in air)
 	public float JumpHMag;  //Horizontal Magnitude of force applied when jumping off a wall. Not used when Jumping off a vertical surface.
 	public float JumpVMag;  //Vertical Magnitude of force applied when jumping off the ground. Scaled value is used when dismounting from the ceiling. 
-
+	
+	[HideInInspector]
 	public float MaxHSpeed_const; //Maximum Horizontal Move Speed
+	[HideInInspector]
 	public float MaxVSpeed_const; //Maximum Vertical Move Speed
+	[HideInInspector]
 	public float MoveVMag_const;  //Magnitude of force applied when moving vertically (Up or Down a wall, not jumping)
+	[HideInInspector]
 	public float MoveHMag_const;  //Magnitude of force applied when moving horizontally (left or right on ground or ceiling, scaled while in air)
+	[HideInInspector]
 	public float JumpHMag_const;  //Horizontal Magnitude of force applied when jumping off a wall. Not used when Jumping off a vertical surface.
+	[HideInInspector]
 	public float JumpVMag_const;
 
 	public float InAirHScale;
@@ -41,15 +47,15 @@ public class HeroControl : MonoBehaviour {
 	Vector2 MoveForce;          //Variable for holding controller Axis data. Here for memory allocation reasions
 	
 	bool TriggerJump;           //Indicates whether the player should jump in the next FixedUpdate call.
-	bool TouchGround;           //Indicates wheather the player is touching the ground
+	public bool TouchGround;           //Indicates wheather the player is touching the ground
 	bool TouchWallToLeft;       //Indicates whether the player is touching a wall on its left side
 	bool TouchWallToRight;      //Indicates whether the player is touching a wall on its right side
 	bool TouchCeiling;          //Inidcates whether the player is touching the ceiling.
-	bool WallStick;             //Inidcates whether the player should be stuck to a wall surface
-	bool CeilingStick;          //Indicates whether the player should be stuck to the ceiling
-	int size = 1;                  //Backing for Size property
+	public bool WallStick;             //Inidcates whether the player should be stuck to a wall surface
+	public bool CeilingStick;          //Indicates whether the player should be stuck to the ceiling
+	public int size = 1;                  //Backing for Size property
 	public float sizeScaleFactor = 0.5f;
-	public float speedScaleFactor = 0.75f;
+	public float speedScaleFactor = 0.5f;
 	
 	//Shortcut for checking if the player is in freefall (Not touching any walls and is in the air)
 	bool FreeFall
@@ -135,7 +141,8 @@ public class HeroControl : MonoBehaviour {
 	}
 	void FixedUpdate()
 	{
-		
+		Debug.Log (WallStick);
+
 		//Get Controller Data for Fixed Frame
 		float x=Input.GetAxis("Horizontal");
 		float y=Input.GetAxis("Vertical");
@@ -147,47 +154,45 @@ public class HeroControl : MonoBehaviour {
 		
 		//Player Force Assignment. This portion of the script is probably extrememly inefficient, and should probably be reweritten for
 		//both clarity and optimization reasons. 
-		if((!WallStick))
+		if(!WallStick)
 		{
 			if(CeilingStick){
 				//If we're sticking to the ceiling, pretend gravity is reversed so friction works. 
 				rigidbody2D.AddForce(Vector2.up*9.81f);
 			}
+
 			if(MoveForce.x*rigidbody2D.velocity.x<MaxHSpeed)
 			{
-				if(FreeFall){
+				if(FreeFall) {
 					//If we're freefalling, apply restricted horizontal movement. 
 					rigidbody2D.AddForce(Vector2.right * MoveForce.x * MoveHMag*InAirHScale);
 					
-				}
-				else{
-				if(size==2){
-					//If we're too big to stick to walls
-					if(TouchWallToRight&&(x>0)){
-						//if we're trying to go right and we're touching a right wall, don't assign any force so friction doesn't act to 
-						//"stick" us to the wall.
-					}
-					else if(TouchWallToLeft&&(x<0)){
-						//if we're trying to go left and we're touching a left wall, dont assign any force so frction doesn't act to
-						//"stick" us to the wall.
-					}
-					else
-					{
+				} else {
+					if(size==2) {
+						//If we're too big to stick to walls
+						if(TouchWallToRight&&(x>0)){
+							//if we're trying to go right and we're touching a right wall, don't assign any force so friction doesn't act to 
+							//"stick" us to the wall.
+						}
+						else if(TouchWallToLeft&&(x<0)){
+							//if we're trying to go left and we're touching a left wall, dont assign any force so frction doesn't act to
+							//"stick" us to the wall.
+						}
+						else
+						{
 							//otherwise, move normaly
 							rigidbody2D.AddForce(Vector2.right * MoveForce.x * MoveHMag);
+							//Debug.Log("Add move force.");
+						}
+					} else {
+							//we're a normal size, so move normally.
+							rigidbody2D.AddForce(Vector2.right * MoveForce.x * MoveHMag);
+							//Debug.Log("Add move force.");
 					}
 				}
-				else{
-						//we're a normal size, so move normally.
-						rigidbody2D.AddForce(Vector2.right * MoveForce.x * MoveHMag);
-				}
-				}
-			}
-			
-			
-		}
-		else
-		{
+			} 
+		} else {
+			//Debug.Log ("Sticking to wall!");
 			if(MoveForce.y*rigidbody2D.velocity.y<MaxVSpeed)
 			{
 				
@@ -201,12 +206,14 @@ public class HeroControl : MonoBehaviour {
 				rigidbody2D.AddForce(Vector2.right*9.81f);
 			}
 		}
+
 		//clip horizontal speed.
 		if(Mathf.Abs(rigidbody2D.velocity.x) > MaxHSpeed)
 		{
 			
 			rigidbody2D.velocity.Set(Mathf.Sign(rigidbody2D.velocity.x) * MaxHSpeed, rigidbody2D.velocity.y);
 		}
+
 		//clip vertical speed.
 		if(Mathf.Abs(rigidbody2D.velocity.y)>MaxVSpeed)
 		{
@@ -214,7 +221,7 @@ public class HeroControl : MonoBehaviour {
 			rigidbody2D.velocity.Set(rigidbody2D.velocity.x,Mathf.Sign(rigidbody2D.velocity.y)*MaxVSpeed);
 		}
 			
-    		if(TriggerJump)
+    	if(TriggerJump)
 		{
 			if(TouchGround){
 				//we're jumping up from the ground. Jump normally.
@@ -223,7 +230,7 @@ public class HeroControl : MonoBehaviour {
 			if(StuckOnWallToLeft)
 			{	
 				//we're jumping to the right off a wall.
-					rigidbody2D.AddForce(new Vector2(JumpHMag,JumpVMag*0.25f));
+				rigidbody2D.AddForce(new Vector2(JumpHMag,JumpVMag*0.25f));
 			}
 			if(StuckOnWallToRight)
 			{
@@ -237,6 +244,7 @@ public class HeroControl : MonoBehaviour {
 			}
 			TriggerJump=false;
 		}
+
 		//Fix a bug where graviy sometimes doesn't reset.
 		if(FreeFall&&(rigidbody2D.gravityScale!=1))
 		{
@@ -246,24 +254,50 @@ public class HeroControl : MonoBehaviour {
 
 		//Animation Controllers
 		animator.SetBool ("grounded", !FreeFall);
-		if(Input.GetAxis("Horizontal") > 0) {
+		if( ((Input.GetAxis("Horizontal") > 0) && !WallStick && !CeilingStick) 
+		   || ((Input.GetAxis("Horizontal") < 0) && CeilingStick)
+		   || ((Input.GetAxis("Vertical") < 0) && StuckOnWallToLeft) 
+		   || ((Input.GetAxis("Vertical") > 0) && StuckOnWallToRight)) {
 			animator.SetInteger("direction", 1);
-		} else if (Input.GetAxis("Horizontal") < 0) {
+		} else if ( ((Input.GetAxis("Horizontal") < 0) && !WallStick && !CeilingStick) 
+		           || ((Input.GetAxis("Horizontal") > 0) && CeilingStick) 
+		           || ((Input.GetAxis("Vertical") > 0) && StuckOnWallToLeft)
+		           || ((Input.GetAxis("Vertical") < 0) && StuckOnWallToRight)) {
 			animator.SetInteger("direction", -1);
 		} else {
 			animator.SetInteger("direction", 0);
 		}
 
 		//Rotate the sprite
-		if(TouchGround || FreeFall && transform.rotation.eulerAngles.x != 0) {
-			transform.Rotate (0, 0, 0);
-			Debug.Log ("Rotate to 0");
-		} else if(WallStick && TouchWallToLeft && transform.rotation.eulerAngles.x != 90) {
-			//transform.Rotate(90, 0, 0);
-			//Debug.Log ("Rotate to 90");
+		float zRotation = 0;
+		if(CeilingStick && TouchCeiling) {
+			if(animator.transform.rotation.eulerAngles.z != 180) {
+				zRotation = 180;
+				animator.transform.eulerAngles = new Vector3(0, 0, zRotation);
+				Debug.Log ("Rotate to 180");
+			}
+		} else if(WallStick && TouchWallToLeft) {
+			if(animator.transform.rotation.eulerAngles.z != 270) {
+				zRotation = 270;
+				animator.transform.eulerAngles = new Vector3(0, 0, zRotation);
+				Debug.Log ("Rotate to 270");
+			}
+		} else if(WallStick && TouchWallToRight) {
+			if(animator.transform.rotation.eulerAngles.z != 90) {
+				zRotation = 90;
+				animator.transform.eulerAngles = new Vector3(0, 0, zRotation);
+				Debug.Log ("Rotate to 90");
+			}
+		} else {
+			if(animator.transform.rotation.eulerAngles.z != 0) {
+				zRotation = 0;
+				animator.transform.eulerAngles = new Vector3(0, 0, zRotation);
+				Debug.Log ("Rotate to 0");
+			}
 		}
 
 	}
+
 	void OnCollisionEnter2D(Collision2D col)
 	{	
 		//should probably turn this into a switch statement somehow.
@@ -277,6 +311,7 @@ public class HeroControl : MonoBehaviour {
 					rigidbody2D.velocity.Set (0,0);
  					rigidbody2D.gravityScale=0;
  					WallStick=true;
+					//Debug.Log ("Stick to the wall!");
  				}			
 			}
 
@@ -303,6 +338,12 @@ public class HeroControl : MonoBehaviour {
 			rigidbody2D.gravityScale=1;
 			WallStick=false;
 			CeilingStick=false;
+		} else if (!TouchGround) {
+			if(col.collider.tag == "Wall") {
+				rigidbody2D.velocity.Set (0,0);
+				rigidbody2D.gravityScale=0;
+				WallStick = true;
+			}
 		}
 	}
 	//This needs to be fixed before multi-platform walls can be included
@@ -364,7 +405,7 @@ public class HeroControl : MonoBehaviour {
 			MoveHMag -= MoveHMag_const * speedScaleFactor;  //Magnitude of force applied when moving horizontally (left or right on ground or ceiling, scaled while in air)
 			JumpHMag -= JumpHMag_const * speedScaleFactor;  //Horizontal Magnitude of force applied when jumping off a wall. Not used when Jumping off a vertical surface.
 			JumpVMag -= JumpVMag_const * speedScaleFactor;
-			Debug.Log (size + ": " + MaxHSpeed + " " + MaxVSpeed + " " + MoveVMag + " " + MoveHMag + " " + JumpHMag + " " + JumpVMag);
+			//Debug.Log (size + ": " + MaxHSpeed + " " + MaxVSpeed + " " + MoveVMag + " " + MoveHMag + " " + JumpHMag + " " + JumpVMag);
 		} else if(size == 1) {
 			MaxHSpeed = MaxHSpeed_const; //Maximum Horizontal Move Speed
 			MaxVSpeed = MaxVSpeed_const; //Maximum Vertical Move Speed
@@ -372,7 +413,7 @@ public class HeroControl : MonoBehaviour {
 			MoveHMag = MoveHMag_const;  //Magnitude of force applied when moving horizontally (left or right on ground or ceiling, scaled while in air)
 			JumpHMag = JumpHMag_const;  //Horizontal Magnitude of force applied when jumping off a wall. Not used when Jumping off a vertical surface.
 			JumpVMag = JumpVMag_const;
-			Debug.Log (size + ": " + MaxHSpeed + " " + MaxVSpeed + " " + MoveVMag + " " + MoveHMag + " " + JumpHMag + " " + JumpVMag);
+			//Debug.Log (size + ": " + MaxHSpeed + " " + MaxVSpeed + " " + MoveVMag + " " + MoveHMag + " " + JumpHMag + " " + JumpVMag);
 		} else {
 			MaxHSpeed -= MaxHSpeed_const * speedScaleFactor; //Maximum Horizontal Move Speed
 			MaxVSpeed -= MaxVSpeed_const * speedScaleFactor; //Maximum Vertical Move Speed
@@ -380,7 +421,7 @@ public class HeroControl : MonoBehaviour {
 			MoveHMag -= MoveHMag_const * speedScaleFactor;  //Magnitude of force applied when moving horizontally (left or right on ground or ceiling, scaled while in air)
 			JumpHMag -= JumpHMag_const * speedScaleFactor;  //Horizontal Magnitude of force applied when jumping off a wall. Not used when Jumping off a vertical surface.
 			JumpVMag -= JumpVMag_const * speedScaleFactor;
-			Debug.Log (size + ": " + MaxHSpeed + " " + MaxVSpeed + " " + MoveVMag + " " + MoveHMag + " " + JumpHMag + " " + JumpVMag);
+			//Debug.Log (size + ": " + MaxHSpeed + " " + MaxVSpeed + " " + MoveVMag + " " + MoveHMag + " " + JumpHMag + " " + JumpVMag);
 		}
 	}
 
