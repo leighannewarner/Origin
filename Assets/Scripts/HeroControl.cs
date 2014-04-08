@@ -257,12 +257,12 @@ public class HeroControl : MonoBehaviour {
 		if( ((Input.GetAxis("Horizontal") > 0) && !WallStick && !CeilingStick) 
 		   || ((Input.GetAxis("Horizontal") < 0) && CeilingStick)
 		   || ((Input.GetAxis("Vertical") < 0) && StuckOnWallToLeft) 
-		   || ((Input.GetAxis("Vertical") >a 0) && StuckOnWallToRight)) {
+		   || ((Input.GetAxis("Vertical") > 0) && StuckOnWallToRight)) {
 			animator.SetInteger("direction", 1);
 		} else if ( ((Input.GetAxis("Horizontal") < 0) && !WallStick && !CeilingStick) 
 		           || ((Input.GetAxis("Horizontal") > 0) && CeilingStick) 
 		           || ((Input.GetAxis("Vertical") > 0) && StuckOnWallToLeft)
-		           || ((Input.GetAxis("Vertical") < 0) && StuckOnWallToRight)) {
+		           || ((Input.GetAxis("Vertical") < 0) && StuckOnWallToRight) ) {
 			animator.SetInteger("direction", -1);
 		} else {
 			animator.SetInteger("direction", 0);
