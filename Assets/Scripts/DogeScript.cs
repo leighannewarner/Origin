@@ -23,7 +23,7 @@ public class DogeScript : MonoBehaviour {
 				backItUp = 0;
 				windUp--;
 			} else if (backItUp > 0) {
-				Debug.Log("Back it up!");
+				//Debug.Log("Back it up!");
 				backItUp--;
 				rigidbody2D.AddForce(Vector2.right * moveForce * h * -1.0f);
 				if(backItUp == 0) {
@@ -55,8 +55,5 @@ public class DogeScript : MonoBehaviour {
 			currentMaxSpeed = (currentMaxSpeed/2);
 		}
 	}
-	
-	void OnCollisionExit2D (Collision2D c) {
 
-	}
 }

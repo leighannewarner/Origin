@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerDetectorScript : MonoBehaviour {
+public class DogePlayerDetectorScript : MonoBehaviour {
 
 	void Update() {
 		//Debug.Log (".");
