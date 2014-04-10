@@ -141,7 +141,7 @@ public class HeroControl : MonoBehaviour {
 	}
 	void FixedUpdate()
 	{
-		Debug.Log (WallStick);
+		//Debug.Log (WallStick);
 
 		//Get Controller Data for Fixed Frame
 		float x=Input.GetAxis("Horizontal");
@@ -274,25 +274,25 @@ public class HeroControl : MonoBehaviour {
 			if(animator.transform.rotation.eulerAngles.z != 180) {
 				zRotation = 180;
 				animator.transform.eulerAngles = new Vector3(0, 0, zRotation);
-				Debug.Log ("Rotate to 180");
+				//Debug.Log ("Rotate to 180");
 			}
 		} else if(WallStick && TouchWallToLeft) {
 			if(animator.transform.rotation.eulerAngles.z != 270) {
 				zRotation = 270;
 				animator.transform.eulerAngles = new Vector3(0, 0, zRotation);
-				Debug.Log ("Rotate to 270");
+				//Debug.Log ("Rotate to 270");
 			}
 		} else if(WallStick && TouchWallToRight) {
 			if(animator.transform.rotation.eulerAngles.z != 90) {
 				zRotation = 90;
 				animator.transform.eulerAngles = new Vector3(0, 0, zRotation);
-				Debug.Log ("Rotate to 90");
+				//Debug.Log ("Rotate to 90");
 			}
 		} else {
 			if(animator.transform.rotation.eulerAngles.z != 0) {
 				zRotation = 0;
 				animator.transform.eulerAngles = new Vector3(0, 0, zRotation);
-				Debug.Log ("Rotate to 0");
+				//Debug.Log ("Rotate to 0");
 			}
 		}
 

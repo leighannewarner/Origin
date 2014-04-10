@@ -9,15 +9,21 @@ public class PlayerDetectorScript : MonoBehaviour {
 
 	void OnTriggerEnter2D (Collider2D c) {
 		if(c.gameObject.tag == "Player") {
-			(gameObject.transform.parent.GetComponent<EnemyScript>()).nearPlayer = true;
-			(gameObject.transform.parent.GetComponent<EnemyScript>()).currentMaxSpeed = (gameObject.transform.parent.GetComponent<EnemyScript>()).maxSpeed * 4;
+			(gameObject.transform.parent.GetComponent<DogeScript>()).nearPlayer = true;
+			(gameObject.transform.parent.GetComponent<DogeScript>()).windUp = 50;
+			if(c.transform.position.x > this.transform.position.x) {
+				(gameObject.transform.parent.GetComponent<DogeScript>()).h = 1.0f;
+			} else {
+				(gameObject.transform.parent.GetComponent<DogeScript>()).h = -1.0f;
+			}
 		}
 	}
 
 	void OnTriggerExit2D (Collider2D c) {
 		if(c.gameObject.tag == "Player") {
-			(gameObject.transform.parent.GetComponent<EnemyScript>()).nearPlayer = false;
-			(gameObject.transform.parent.GetComponent<EnemyScript>()).reverse ();
+			(gameObject.transform.parent.GetComponent<DogeScript>()).nearPlayer = false;
+			(gameObject.transform.parent.GetComponent<DogeScript>()).windUp = 0;
+			(gameObject.transform.parent.GetComponent<DogeScript>()).backItUp = 0;
 		}
 	}
 }
