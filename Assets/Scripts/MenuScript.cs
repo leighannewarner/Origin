@@ -59,20 +59,5 @@ public class MenuScript : MonoBehaviour
 			GUILayer.Destroy(this);
 		}
 
-		if (
-			GUI.Button(
-			new Rect(
-			((Screen.width/2) - (buttonWidth/2) + buttonWidth),
-			((Screen.height/2) - (buttonHeight/2) + buttonHeight),
-			buttonWidth,
-			buttonHeight
-			),
-			"Level 4"
-			)
-			)
-		{
-			Application.LoadLevel("Level4");
-			GUILayer.Destroy(this);
-		}
 	}
 }
