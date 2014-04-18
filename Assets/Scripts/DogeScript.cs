@@ -11,13 +11,23 @@ public class DogeScript : MonoBehaviour {
 	public int backItUp = 0;
 	public float h = 1.0f;
 
+	//Animation Controls
+	private Animator animator;
+	private Transform animatorParent;
+
 	void Awake()
 	{
+		animatorParent = transform.Find("DogeAnimations");
+		animator = animatorParent.GetComponent<Animator>();
 		currentMaxSpeed = maxSpeed;
 	}
 
 	void FixedUpdate ()
 	{	
+		animator.SetBool("nearPlayer", nearPlayer);
+
+		animator.transform.localScale = new Vector3((Mathf.Abs(transform.localScale.x) * h * -1.0f),transform.localScale.y,transform.localScale.z);
+
 		if (nearPlayer) {
 			if(windUp > 0) {
 				backItUp = 0;
@@ -31,16 +41,17 @@ public class DogeScript : MonoBehaviour {
 				}
 			} else {
 				if(Mathf.Abs(rigidbody2D.velocity.x) < currentMaxSpeed) {			
-					rigidbody2D.AddForce(Vector2.right * moveForce * h); 	
+					rigidbody2D.AddForce(Vector2.right * moveForce * h);
 				}
-				
+			
 				if(Mathf.Abs(rigidbody2D.velocity.x) > maxSpeed) {
 					rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.x) * currentMaxSpeed * h, rigidbody2D.velocity.y);
 				}
 			}
 		} else {
-			rigidbody2D.velocity = Vector2.zero;
+			rigidbody2D.velocity = new Vector2(0, rigidbody2D.velocity.y - 9.81f);
 		}
+
 	}
 
 

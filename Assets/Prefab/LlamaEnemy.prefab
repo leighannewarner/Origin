@@ -107,7 +107,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 39.1301384, y: -22.1277046, z: 0}
+  m_LocalPosition: {x: 25.7270069, y: -13.2890444, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 0}
   m_Children:
   - {fileID: 400006}
@@ -216,16 +216,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69284132ef28948abb9f10e15f50bd7b, type: 3}
+  m_Script: {fileID: 11500000, guid: e26d63f15b4a045fa9aec41c8166e6e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nearPlayer: 0
-  maxSpeed: 100
-  currentMaxSpeed: 100
-  moveForce: 50
-  windUp: 0
-  backItUp: 0
   h: 1
+  nearPlayer: 0
+  shotDelay: 0
+  bullet: {fileID: 100000, guid: c4a137087038a493898f87ddad3b59bc, type: 2}
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -234,7 +231,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 100010}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 500193e7a15834ed4b5c6397f119a99f, type: 3}
+  m_Script: {fileID: 11500000, guid: 8494f506e0e894774ae8700f4891db05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!212 &21200000
