@@ -26,7 +26,7 @@ public class DogeScript : MonoBehaviour {
 	{	
 		animator.SetBool("nearPlayer", nearPlayer);
 
-		animator.transform.localScale = new Vector3((Mathf.Abs(transform.localScale.x) * h * -1.0f),transform.localScale.y,transform.localScale.z);
+		animator.transform.localScale = new Vector3((Mathf.Abs(transform.localScale.x) * h),transform.localScale.y,transform.localScale.z);
 
 		if (nearPlayer) {
 			if(windUp > 0) {

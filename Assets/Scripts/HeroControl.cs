@@ -56,7 +56,9 @@ public class HeroControl : MonoBehaviour {
 	public int size = 1;                  //Backing for Size property
 	public float sizeScaleFactor = 0.5f;
 	public float speedScaleFactor = 0.5f;
-	
+
+	private int stun;
+
 	//Shortcut for checking if the player is in freefall (Not touching any walls and is in the air)
 	bool FreeFall
 	{
@@ -112,144 +114,153 @@ public class HeroControl : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		//Get Controller Data.
-		float x=Input.GetAxis("Horizontal");
-		float y=Input.GetAxis("Vertical");
-		//Fix Controller data to only have values in the set {-1,0,1}
-		x=Mathf.Abs(x)>0.01f?Mathf.Sign(x):0;
-		y=Mathf.Abs(y)>0.01f?Mathf.Sign(y):0;
-		//Set Controller Data for use in FixedUpdate.
-		MoveForce.Set(x,y);
-		//Update Player State
-		TouchGround=Physics2D.Linecast(transform.position-new Vector3(0.5f,0,0),GroundCheckLeft.position,1<<LayerMask.NameToLayer("Terrain"))||
+
+		if(stun == 0) {
+			//Get Controller Data.
+			float x=Input.GetAxis("Horizontal");
+			float y=Input.GetAxis("Vertical");
+			//Fix Controller data to only have values in the set {-1,0,1}
+			x=Mathf.Abs(x)>0.01f?Mathf.Sign(x):0;
+			y=Mathf.Abs(y)>0.01f?Mathf.Sign(y):0;
+			//Set Controller Data for use in FixedUpdate.
+			MoveForce.Set(x,y);
+			//Update Player State
+			TouchGround=Physics2D.Linecast(transform.position-new Vector3(0.5f,0,0),GroundCheckLeft.position,1<<LayerMask.NameToLayer("Terrain"))||
+						Physics2D.Linecast(transform.position-new Vector3(-0.5f,0,0),GroundCheckRight.position,1<<LayerMask.NameToLayer("Terrain"))||
+					Physics2D.Linecast(transform.position-new Vector3(0.5f,0,0),GroundCheckRight.position,1<<LayerMask.NameToLayer("Enemies"))||
 					Physics2D.Linecast(transform.position-new Vector3(-0.5f,0,0),GroundCheckRight.position,1<<LayerMask.NameToLayer("Terrain"));
-		TouchWallToLeft=Physics2D.Linecast(transform.position,LeftCheck.position,1<<LayerMask.NameToLayer("Terrain"));
-		TouchWallToRight=Physics2D.Linecast(transform.position,RightCheck.position,1<<LayerMask.NameToLayer("Terrain"));
-		TouchCeiling=Physics2D.Linecast(transform.position,CeilingCheck.position,1<<LayerMask.NameToLayer("Terrain"));
-		if(CanJump){
-			TriggerJump=Input.GetButtonDown("Jump");
-		}
-		//Handle Size Switches.
-		if(Input.GetButtonDown("Fire1"))
-		{
-			increaseSize();
-		}
-		if(Input.GetButtonDown("Fire2"))
-		{
-			decreaseSize();
+			TouchWallToLeft=Physics2D.Linecast(transform.position,LeftCheck.position,1<<LayerMask.NameToLayer("Terrain"));
+			TouchWallToRight=Physics2D.Linecast(transform.position,RightCheck.position,1<<LayerMask.NameToLayer("Terrain"));
+			TouchCeiling=Physics2D.Linecast(transform.position,CeilingCheck.position,1<<LayerMask.NameToLayer("Terrain"));
+			if(CanJump){
+				TriggerJump=Input.GetButtonDown("Jump");
+			}
+			//Handle Size Switches.
+			if(Input.GetButtonDown("Fire2"))
+			{
+				increaseSize();
+			}
+			if(Input.GetButtonDown("Fire1"))
+			{
+				decreaseSize();
+			}
 		}
 	}
+
 	void FixedUpdate()
 	{
-		//Debug.Log (WallStick);
+		if(stun == 0) {
+			//Debug.Log (WallStick);
 
-		//Get Controller Data for Fixed Frame
-		float x=Input.GetAxis("Horizontal");
-		float y=Input.GetAxis("Vertical");
-		
-		//Manipulate data into correct range.
-		x=Mathf.Abs(x)>0.01f?Mathf.Sign(x):0;
-		y=Mathf.Abs(y)>0.01f?Mathf.Sign(y):0;
-		MoveForce.Set(x,y);
-		
-		//Player Force Assignment. This portion of the script is probably extrememly inefficient, and should probably be reweritten for
-		//both clarity and optimization reasons. 
-		if(!WallStick)
-		{
-			if(CeilingStick){
-				//If we're sticking to the ceiling, pretend gravity is reversed so friction works. 
-				rigidbody2D.AddForce(Vector2.up*9.81f);
-			}
-
-			if(MoveForce.x*rigidbody2D.velocity.x<MaxHSpeed)
+			//Get Controller Data for Fixed Frame
+			float x=Input.GetAxis("Horizontal");
+			float y=Input.GetAxis("Vertical");
+			
+			//Manipulate data into correct range.
+			x=Mathf.Abs(x)>0.01f?Mathf.Sign(x):0;
+			y=Mathf.Abs(y)>0.01f?Mathf.Sign(y):0;
+			MoveForce.Set(x,y);
+			
+			//Player Force Assignment. This portion of the script is probably extrememly inefficient, and should probably be reweritten for
+			//both clarity and optimization reasons. 
+			if(!WallStick)
 			{
-				if(FreeFall) {
-					//If we're freefalling, apply restricted horizontal movement. 
-					rigidbody2D.AddForce(Vector2.right * MoveForce.x * MoveHMag*InAirHScale);
-					
-				} else {
-					if(size==2) {
-						//If we're too big to stick to walls
-						if(TouchWallToRight&&(x>0)){
-							//if we're trying to go right and we're touching a right wall, don't assign any force so friction doesn't act to 
-							//"stick" us to the wall.
-						}
-						else if(TouchWallToLeft&&(x<0)){
-							//if we're trying to go left and we're touching a left wall, dont assign any force so frction doesn't act to
-							//"stick" us to the wall.
-						}
-						else
-						{
-							//otherwise, move normaly
-							rigidbody2D.AddForce(Vector2.right * MoveForce.x * MoveHMag);
-							//Debug.Log("Add move force.");
-						}
-					} else {
-							//we're a normal size, so move normally.
-							rigidbody2D.AddForce(Vector2.right * MoveForce.x * MoveHMag);
-							//Debug.Log("Add move force.");
-					}
+				if(CeilingStick){
+					//If we're sticking to the ceiling, pretend gravity is reversed so friction works. 
+					rigidbody2D.AddForce(Vector2.up*9.81f);
 				}
-			} 
+
+				if(MoveForce.x*rigidbody2D.velocity.x<MaxHSpeed)
+				{
+					if(FreeFall) {
+						//If we're freefalling, apply restricted horizontal movement. 
+						rigidbody2D.AddForce(Vector2.right * MoveForce.x * MoveHMag*InAirHScale);
+						
+					} else {
+						if(size==2) {
+							//If we're too big to stick to walls
+							if(TouchWallToRight&&(x>0)){
+								//if we're trying to go right and we're touching a right wall, don't assign any force so friction doesn't act to 
+								//"stick" us to the wall.
+							}
+							else if(TouchWallToLeft&&(x<0)){
+								//if we're trying to go left and we're touching a left wall, dont assign any force so frction doesn't act to
+								//"stick" us to the wall.
+							}
+							else
+							{
+								//otherwise, move normaly
+								rigidbody2D.AddForce(Vector2.right * MoveForce.x * MoveHMag);
+								//Debug.Log("Add move force.");
+							}
+						} else {
+								//we're a normal size, so move normally.
+								rigidbody2D.AddForce(Vector2.right * MoveForce.x * MoveHMag);
+								//Debug.Log("Add move force.");
+						}
+					}
+				} 
+			} else {
+				//Debug.Log ("Sticking to wall!");
+				if(MoveForce.y*rigidbody2D.velocity.y<MaxVSpeed)
+				{
+					
+					rigidbody2D.AddForce(Vector2.up * MoveForce.y * MoveVMag);
+					
+				}
+				if(StuckOnWallToLeft){
+					rigidbody2D.AddForce(Vector2.right*-1*9.81f);
+				}
+				else if(StuckOnWallToRight){
+					rigidbody2D.AddForce(Vector2.right*9.81f);
+				}
+			}
+
+			//clip horizontal speed.
+			if(Mathf.Abs(rigidbody2D.velocity.x) > MaxHSpeed)
+			{
+				
+				rigidbody2D.velocity.Set(Mathf.Sign(rigidbody2D.velocity.x) * MaxHSpeed, rigidbody2D.velocity.y);
+			}
+
+			//clip vertical speed.
+			if(Mathf.Abs(rigidbody2D.velocity.y)>MaxVSpeed)
+			{
+			
+				rigidbody2D.velocity.Set(rigidbody2D.velocity.x,Mathf.Sign(rigidbody2D.velocity.y)*MaxVSpeed);
+			}
+				
+	    	if(TriggerJump)
+			{
+				if(TouchGround){
+					//we're jumping up from the ground. Jump normally.
+					rigidbody2D.AddForce(Vector2.up*JumpVMag);
+				}
+				if(StuckOnWallToLeft)
+				{	
+					//we're jumping to the right off a wall.
+					rigidbody2D.AddForce(new Vector2(JumpHMag,JumpVMag*0.25f));
+				}
+				if(StuckOnWallToRight)
+				{
+					//we're jumping off the left off a wall.
+					rigidbody2D.AddForce(new Vector2(-JumpHMag,JumpVMag*0.25f));
+				}
+				if(CeilingStick)
+				{
+					//we're dropping off the ceiling.
+					rigidbody2D.AddForce(Vector2.up*-1*JumpVMag*0.2f);
+				}
+				TriggerJump=false;
+			}
+
+			//Fix a bug where graviy sometimes doesn't reset.
+			if(FreeFall&&(rigidbody2D.gravityScale!=1))
+			{
+				rigidbody2D.gravityScale=1;
+			}
 		} else {
-			//Debug.Log ("Sticking to wall!");
-			if(MoveForce.y*rigidbody2D.velocity.y<MaxVSpeed)
-			{
-				
-				rigidbody2D.AddForce(Vector2.up * MoveForce.y * MoveVMag);
-				
-			}
-			if(StuckOnWallToLeft){
-				rigidbody2D.AddForce(Vector2.right*-1*9.81f);
-			}
-			else if(StuckOnWallToRight){
-				rigidbody2D.AddForce(Vector2.right*9.81f);
-			}
-		}
-
-		//clip horizontal speed.
-		if(Mathf.Abs(rigidbody2D.velocity.x) > MaxHSpeed)
-		{
-			
-			rigidbody2D.velocity.Set(Mathf.Sign(rigidbody2D.velocity.x) * MaxHSpeed, rigidbody2D.velocity.y);
-		}
-
-		//clip vertical speed.
-		if(Mathf.Abs(rigidbody2D.velocity.y)>MaxVSpeed)
-		{
-		
-			rigidbody2D.velocity.Set(rigidbody2D.velocity.x,Mathf.Sign(rigidbody2D.velocity.y)*MaxVSpeed);
-		}
-			
-    	if(TriggerJump)
-		{
-			if(TouchGround){
-				//we're jumping up from the ground. Jump normally.
-				rigidbody2D.AddForce(Vector2.up*JumpVMag);
-			}
-			if(StuckOnWallToLeft)
-			{	
-				//we're jumping to the right off a wall.
-				rigidbody2D.AddForce(new Vector2(JumpHMag,JumpVMag*0.25f));
-			}
-			if(StuckOnWallToRight)
-			{
-				//we're jumping off the left off a wall.
-				rigidbody2D.AddForce(new Vector2(-JumpHMag,JumpVMag*0.25f));
-			}
-			if(CeilingStick)
-			{
-				//we're dropping off the ceiling.
-				rigidbody2D.AddForce(Vector2.up*-1*JumpVMag*0.2f);
-			}
-			TriggerJump=false;
-		}
-
-		//Fix a bug where graviy sometimes doesn't reset.
-		if(FreeFall&&(rigidbody2D.gravityScale!=1))
-		{
-		
-			rigidbody2D.gravityScale=1;
+			stun--;
 		}
 
 		//Animation Controllers
@@ -267,7 +278,7 @@ public class HeroControl : MonoBehaviour {
 		} else {
 			animator.SetInteger("direction", 0);
 		}
-
+		
 		//Rotate the sprite
 		float zRotation = 0;
 		if(CeilingStick && TouchCeiling) {
@@ -327,7 +338,11 @@ public class HeroControl : MonoBehaviour {
 				}
 				
 			}
-		}
+		} else if (col.collider.tag == "Grate") {
+			if (!(col.gameObject.GetComponent<GrateScript>()).broken && size >= 2) {
+				(col.gameObject.GetComponent<GrateScript>()).breakGrate();
+			}
+		} 
 	}
 	void OnCollisionStay2D(Collision2D col)
 	{
@@ -423,6 +438,33 @@ public class HeroControl : MonoBehaviour {
 			JumpVMag -= JumpVMag_const * speedScaleFactor;
 			//Debug.Log (size + ": " + MaxHSpeed + " " + MaxVSpeed + " " + MoveVMag + " " + MoveHMag + " " + JumpHMag + " " + JumpVMag);
 		}
+	}
+
+	public void getHit() {
+		unstick();
+		stun = 30;
+	}
+
+	void unstick() {
+		if(StuckOnWallToLeft)
+		{	
+			//we're jumping to the right off a wall.
+			rigidbody2D.AddForce(new Vector2(JumpHMag*0.1f,JumpVMag*0.1f));
+		}
+		if(StuckOnWallToRight)
+		{
+			//we're jumping off the left off a wall.
+			rigidbody2D.AddForce(new Vector2(-JumpHMag*0.1f,JumpVMag*0.1f));
+		}
+		if(CeilingStick)
+		{
+			//we're dropping off the ceiling.
+			rigidbody2D.AddForce(Vector2.up*-1*JumpVMag*0.001f);
+		}
+
+		rigidbody2D.gravityScale=1;
+		WallStick=false;			
+		CeilingStick=false;
 	}
 
 }

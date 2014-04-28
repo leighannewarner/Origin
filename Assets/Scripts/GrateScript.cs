@@ -4,6 +4,7 @@ using System.Collections;
 public class GrateScript : MonoBehaviour {
 
 	public bool broken = false;
+	public Sprite broken_sprite;
 
 	// Use this for initialization
 	void Start () {
@@ -15,18 +16,10 @@ public class GrateScript : MonoBehaviour {
 	
 	}
 
-	void breakGrate() {
+	public void breakGrate() {
 		broken = true;
 		Destroy(this.collider2D);
+		(GetComponent<SpriteRenderer>()).sprite = broken_sprite;
 	}
-
-	void OnColliderEnter2D (Collision2D c) {
-		if(c.gameObject.tag == "Player") {
-			if((c.gameObject.GetComponent<HeroControl>()).size >= 2) {
-				breakGrate();
-			} else {
-				Debug.Log(c.gameObject.GetComponent<HeroControl>().size);
-			}
-		}
-	}
+	
 }

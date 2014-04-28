@@ -6,6 +6,10 @@ TagManager:
   - PlayerAnimation
   - Terrain
   - Enemy
+  - Grate
+  - Wall
+  - Ceiling
+  - DeathFloor
   - 
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX

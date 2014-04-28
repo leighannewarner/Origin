@@ -8,8 +8,8 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400000}
-  - 58: {fileID: 5800000}
   - 114: {fileID: 11400000}
+  - 61: {fileID: 6100002}
   m_Layer: 0
   m_Name: Detector.Player
   m_TagString: Untagged
@@ -76,7 +76,6 @@ GameObject:
   - 61: {fileID: 6100000}
   - 50: {fileID: 5000000}
   - 114: {fileID: 11400002}
-  - 60: {fileID: 6000000}
   m_Layer: 9
   m_Name: DogeEnemy
   m_TagString: Enemy
@@ -124,8 +123,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5, y: 5, z: 0}
+  m_LocalPosition: {x: -.400000006, y: -.300000012, z: 0}
+  m_LocalScale: {x: 6, y: 6, z: 0}
   m_Children: []
   m_Father: {fileID: 400008}
 --- !u!4 &400002
@@ -168,8 +167,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100008}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 21.9277306, y: -13.2755718, z: 0}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 0}
+  m_LocalPosition: {x: 20.9188366, y: -13.0012674, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 0}
   m_Children:
   - {fileID: 400006}
   - {fileID: 400004}
@@ -215,8 +214,19 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
---- !u!58 &5800000
-CircleCollider2D:
+--- !u!61 &6100000
+BoxCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100008}
+  m_Enabled: 1
+  m_Material: {fileID: 6200000, guid: 7b2f09bc2eaf625479474c031aed8572, type: 2}
+  m_IsTrigger: 0
+  m_Size: {x: 2.20000005, y: 1.29999995}
+  m_Center: {x: -.400000006, y: -.300000012}
+--- !u!61 &6100002
+BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -224,42 +234,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Radius: .5
-  m_Center: {x: 0, y: 0}
---- !u!60 &6000000
-PolygonCollider2D:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100008}
-  m_Enabled: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Poly:
-    m_Paths:
-    - - {x: .299999982, y: .159999996}
-      - {x: .189999998, y: .199999988}
-      - {x: .159999996, y: .209999993}
-      - {x: -.0700000003, y: .209999993}
-      - {x: -.219999999, y: .140000001}
-      - {x: -.370000005, y: .0599999987}
-      - {x: -.379999995, y: .0299999993}
-      - {x: -.379999995, y: -.159999996}
-      - {x: -.229999989, y: -.199999988}
-      - {x: .219999999, y: -.199999988}
-      - {x: .310000002, y: -.099999994}
-      - {x: .319999993, y: -.0899999961}
-      - {x: .319999993, y: .0799999982}
---- !u!61 &6100000
-BoxCollider2D:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100008}
-  m_Enabled: 0
-  m_Material: {fileID: 6200000, guid: 7b2f09bc2eaf625479474c031aed8572, type: 2}
-  m_IsTrigger: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1, y: .200000003}
   m_Center: {x: 0, y: 0}
 --- !u!95 &9500000
 Animator:
@@ -417,7 +392,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 100
   m_SortingLayerID: 0
-  m_Sprite: {fileID: 21300000, guid: 7eaff459115034a34a79ebf254beaf34, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6a9dc03b314374c4c838edd658d73d04, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1001 &100100000
 Prefab:
