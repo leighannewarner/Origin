@@ -14,8 +14,8 @@ public class MenuScript : MonoBehaviour
 		if (
 			GUI.Button(
 			new Rect(
-			((Screen.width/2) - (buttonWidth/2) - buttonWidth),
-			((Screen.height/2) - (buttonHeight/2) - buttonHeight),
+			((Screen.width/2) - (buttonWidth*2)),
+			((Screen.height/2) - (buttonHeight/2) + buttonHeight),
 			buttonWidth,
 			buttonHeight
 			),
@@ -30,8 +30,8 @@ public class MenuScript : MonoBehaviour
 		if (
 			GUI.Button(
 			new Rect(
-			((Screen.width/2) - (buttonWidth/2) + buttonWidth),
-			((Screen.height/2) - (buttonHeight/2) - buttonHeight),
+			((Screen.width/2) - (buttonWidth/2)),
+			((Screen.height/2) - (buttonHeight/2) + buttonHeight),
 			buttonWidth,
 			buttonHeight
 			),
@@ -46,7 +46,7 @@ public class MenuScript : MonoBehaviour
 		if (
 			GUI.Button(
 			new Rect(
-			((Screen.width/2) - (buttonWidth/2)  - buttonWidth),
+			((Screen.width/2) + buttonWidth),
 			((Screen.height/2) - (buttonHeight/2) + buttonHeight),
 			buttonWidth,
 			buttonHeight

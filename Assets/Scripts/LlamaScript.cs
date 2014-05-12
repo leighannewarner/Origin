@@ -94,6 +94,8 @@ public class LlamaScript : MonoBehaviour {
 			Debug.Log ("hitting the wall");
 			h *= -1.0f;
 			delay = 10;
+		} else if (c.gameObject.tag == "Player") {
+			Application.LoadLevel("MainMenu");
 		}
 	}
 

@@ -33,6 +33,7 @@ public class PlayerScript : MonoBehaviour {
 	
 	private Animator animator;
 	public Transform currentCheckpoint;
+	private bool stunned;
 	
 	void Awake()
 	{

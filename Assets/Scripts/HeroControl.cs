@@ -58,6 +58,7 @@ public class HeroControl : MonoBehaviour {
 	public float speedScaleFactor = 0.5f;
 
 	private int stun;
+	private bool stunned;
 
 	//Shortcut for checking if the player is in freefall (Not touching any walls and is in the air)
 	bool FreeFall
@@ -151,6 +152,7 @@ public class HeroControl : MonoBehaviour {
 	{
 		if(stun == 0) {
 			//Debug.Log (WallStick);
+			stunned= false;
 
 			//Get Controller Data for Fixed Frame
 			float x=Input.GetAxis("Horizontal");
@@ -278,6 +280,8 @@ public class HeroControl : MonoBehaviour {
 		} else {
 			animator.SetInteger("direction", 0);
 		}
+
+		animator.SetBool("stunned", stunned);
 		
 		//Rotate the sprite
 		float zRotation = 0;
@@ -443,6 +447,7 @@ public class HeroControl : MonoBehaviour {
 	public void getHit() {
 		unstick();
 		stun = 30;
+		stunned= true;
 	}
 
 	void unstick() {
